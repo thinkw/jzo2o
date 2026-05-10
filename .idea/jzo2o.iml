@@ -2,7 +2,12 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/jzo2o-framework/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/project-xzb-app-uniapp-java/.idea/ZeppelinRemoteNotebooks" />
+      <excludeFolder url="file://$MODULE_DIR$/project-xzb-app-uniapp-java/.idea/shelf" />
+      <excludeFolder url="file://$MODULE_DIR$/project-xzb-pc-admin-vue3-java/.idea" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

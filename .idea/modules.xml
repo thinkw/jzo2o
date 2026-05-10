@@ -3,6 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/jzo2o.iml" filepath="$PROJECT_DIR$/.idea/jzo2o.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jzo2o-api/jzo2o-api.iml" filepath="$PROJECT_DIR$/jzo2o-api/jzo2o-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jzo2o-customer-dev_01/jzo2o-customer.iml" filepath="$PROJECT_DIR$/jzo2o-customer-dev_01/jzo2o-customer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jzo2o-foundations/jzo2o-foundations.iml" filepath="$PROJECT_DIR$/jzo2o-foundations/jzo2o-foundations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jzo2o-gateway/jzo2o-gateway.iml" filepath="$PROJECT_DIR$/jzo2o-gateway/jzo2o-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jzo2o-market/jzo2o-market.iml" filepath="$PROJECT_DIR$/jzo2o-market/jzo2o-market.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jzo2o-publics/jzo2o-publics.iml" filepath="$PROJECT_DIR$/jzo2o-publics/jzo2o-publics.iml" />
     </modules>
   </component>
 </project>
