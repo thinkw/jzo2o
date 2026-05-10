@@ -1,0 +1,6 @@
+/jzo2o-ai-engine/.env
+/jzo2o-ai/src/main/resources/bootstrap.yml
+/jzo2o-ai/src/main/resources/bootstrap-dev.yml
+/jzo2o-ai/src/main/resources/bootstrap-local.yml
+/jzo2o-ai/src/main/resources/bootstrap-prod.yml
+/jzo2o-ai/src/main/resources/bootstrap-test.yml
