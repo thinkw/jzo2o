@@ -2,9 +2,13 @@
 target/
 *.class
 HELP.md
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 ### IDE — IntelliJ IDEA ###
 .idea/
+/jzo2o-orders/.idea/
 *.iml
 *.iws
 *.ipr
@@ -22,6 +26,16 @@ gen/
 
 ### IDE — VS Code ###
 .vscode/
+
+### IDE — NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
 ### Frontend — Node ###
 node_modules/
