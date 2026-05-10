@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/jzo2o-ai/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-customer-dev_01/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-foundations/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-canal-sync/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-es/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-knife4j-web/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-mvc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-mysql/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-parent/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-parent/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-rabbitmq/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-redis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-seata/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-shardingsphere-jdbc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-statemachine/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-thirdparty/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-framework/jzo2o-xxl-job/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-market/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jzo2o-publics/src/main/java" charset="UTF-8" />
+  </component>
+</project>

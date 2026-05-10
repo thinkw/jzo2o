@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/jzo2o-api" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/jzo2o-customer-dev_01" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/jzo2o-foundations" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/jzo2o-framework" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/jzo2o-gateway" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/jzo2o-market" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/jzo2o-publics" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project-xzb-PC-vue3-java" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project-xzb-app-uniapp-java" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/project-xzb-pc-admin-vue3-java" vcs="Git" />
+  </component>
+</project>
