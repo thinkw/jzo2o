@@ -80,3 +80,7 @@ logs/
 ### Misc ###
 templates/
 job/
+
+
+### claude ###
+/.claude/
