@@ -1,6 +1,68 @@
+### Java / Maven ###
+target/
+*.class
+HELP.md
+
+### IDE — IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+gen/
+
+### IDE — STS / Eclipse ###
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.sts4-cache
+.apt_generated
+
+### IDE — VS Code ###
+.vscode/
+
+### Frontend — Node ###
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+### Python ###
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+### AI 引擎敏感配置 ###
 /jzo2o-ai-engine/.env
-/jzo2o-ai/src/main/resources/bootstrap.yml
-/jzo2o-ai/src/main/resources/bootstrap-dev.yml
-/jzo2o-ai/src/main/resources/bootstrap-local.yml
-/jzo2o-ai/src/main/resources/bootstrap-prod.yml
-/jzo2o-ai/src/main/resources/bootstrap-test.yml
+
+#### AI Java模块配置 (含敏感信息, 不提交) ###
+#/jzo2o-ai/src/main/resources/bootstrap.yml
+#/jzo2o-ai/src/main/resources/bootstrap-dev.yml
+#/jzo2o-ai/src/main/resources/bootstrap-local.yml
+#/jzo2o-ai/src/main/resources/bootstrap-prod.yml
+#/jzo2o-ai/src/main/resources/bootstrap-test.yml
+
+### Logs ###
+logs/
+*.log
+
+### OS ###
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+### Misc ###
+templates/
+job/
