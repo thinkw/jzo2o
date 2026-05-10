@@ -17,14 +17,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  * 聊天服务实现 — 鉴权、持久化、SSE代理
+ * Python引擎返回纯文本 token 流(换行分隔), 由本层包装为 SSE 发给前端
  */
 @Slf4j
 @Service
@@ -35,9 +35,6 @@ public class ChatServiceImpl implements ChatService {
 
     @Resource
     private AiChatRecordMapper aiChatRecordMapper;
-
-    /** 提取 SSE data 行内容的正则: data: <content> */
-    private static final Pattern SSE_DATA_PATTERN = Pattern.compile("^data:\\s?(.*)$", Pattern.MULTILINE);
 
     @Override
     public SseEmitter chat(ChatRequestDTO request) {
@@ -68,15 +65,24 @@ public class ChatServiceImpl implements ChatService {
 
         aiEngineClient.streamChat(messages)
                 .subscribe(
-                        sseChunk -> {
-                            // 转发 SSE 数据到前端
-                            try {
-                                emitter.send(SseEmitter.event().data(extractContent(sseChunk)));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
+                        rawChunk -> {
+                            // Python 返回纯文本 token (换行分隔), 包成 SSE 发前端
+                            List<String> tokens = splitTokens(rawChunk);
+                            for (String token : tokens) {
+                                if ("[DONE]".equals(token)) {
+                                    return;
+                                }
+                                if (token.startsWith("[ERROR]")) {
+                                    log.error("Python引擎返回错误: {}", token);
+                                    return;
+                                }
+                                try {
+                                    emitter.send(SseEmitter.event().data(token));
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                responseBuilder.append(token);
                             }
-                            // 积累响应文本用于持久化
-                            responseBuilder.append(extractContent(sseChunk));
                         },
                         error -> {
                             log.error("聊天流式传输异常: {}", error.getMessage());
@@ -97,28 +103,16 @@ public class ChatServiceImpl implements ChatService {
     }
 
     /**
-     * 从 SSE 数据行中提取纯文本内容
-     * 输入: "data: 你好" → 输出: "你好"
-     * 输入: "data: [DONE]" → 输出: ""
+     * 按换行拆分 token, 过滤空行
      */
-    private String extractContent(String sseChunk) {
-        if (StrUtil.isBlank(sseChunk)) {
-            return "";
+    private List<String> splitTokens(String raw) {
+        if (StrUtil.isBlank(raw)) {
+            return List.of();
         }
-        // 按行分割，提取 data: 后面的内容
-        String[] lines = sseChunk.split("\n");
-        StringBuilder sb = new StringBuilder();
-        for (String line : lines) {
-            String trimmed = line.trim();
-            if (trimmed.startsWith("data:")) {
-                String content = trimmed.substring(5).trim();
-                // 跳过结束标记
-                if (!"[DONE]".equals(content) && !content.startsWith("[ERROR]")) {
-                    sb.append(content);
-                }
-            }
-        }
-        return sb.toString();
+        return Arrays.stream(raw.split("\n"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 
     /**

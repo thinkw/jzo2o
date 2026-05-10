@@ -24,7 +24,6 @@ import { ref } from 'vue'
 import { sendChatMessage } from '@/api/chat'
 import ChatMessageList from './ChatMessageList.vue'
 import ChatInput from './ChatInput.vue'
-import { v4 as uuidv4 } from 'uuid' // 可选: 使用 simple UUID
 
 interface ChatMsg {
   role: 'user' | 'assistant'

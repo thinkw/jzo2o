@@ -41,7 +41,9 @@ export async function sendChatMessage(
     stream: true,
   }
 
-  const url = `${baseHost}/ai/consumer/chat/completions`
+  // 本地Vite代理需 /api 前缀, 直连服务器则不加
+  const prefix = baseHost ? '' : '/api'
+  const url = `${baseHost}${prefix}/ai/consumer/chat/completions`
 
   const response = await fetch(url, {
     method: 'POST',

@@ -34,7 +34,7 @@ interface ChatMsg {
   content: string
 }
 
-defineProps<{
+const props = defineProps<{
   messages: ChatMsg[]
   streamingContent: string
   loading: boolean
@@ -44,7 +44,7 @@ const listRef = ref<HTMLElement>()
 
 // 新消息到达时自动滚到底部
 watch(
-  () => [messages.length, streamingContent.value],
+  () => [props.messages.length, props.streamingContent],
   () => nextTick(() => {
     if (listRef.value) {
       listRef.value.scrollTop = listRef.value.scrollHeight

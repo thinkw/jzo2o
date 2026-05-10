@@ -31,7 +31,8 @@ public class PackResultFilter implements Filter {
         if (requestURI.contains(".") ||
                 requestURI.contains("/swagger") ||
                 requestURI.contains("/api-docs") ||
-                requestURI.contains("/inner")) {
+                requestURI.contains("/inner") ||
+                requestURI.contains("/chat/completions")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
