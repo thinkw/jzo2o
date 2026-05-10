@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash([ -f \"$d/package.json\" ])",
-      "Bash(node -e 'const p=require\\('\\\\''./__TRACKED_VAR__/package.json'\\\\''\\); console.log\\(JSON.stringify\\(p.scripts,null,2\\)\\)')"
-    ]
-  }
-}
