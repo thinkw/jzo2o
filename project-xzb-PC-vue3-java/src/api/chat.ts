@@ -26,12 +26,13 @@ interface SSECallback {
 
 /**
  * 发送聊天消息 (SSE 流式)
- * 使用 fetch + ReadableStream 消费服务端推送
+ * Java 端发送单行 SSE (每行对应 LLM 输出的一行内容)
+ * 前端在每个 chunk 后追加 \n 还原原始文档结构
  */
 export async function sendChatMessage(
   messages: ChatMessage[],
   sessionId: string,
-  callbacks: SSECallback
+  callbacks: SSECallback,
 ): Promise<void> {
   const token = localStorage.getItem(TOKEN_NAME)
 
@@ -59,7 +60,6 @@ export async function sendChatMessage(
     return
   }
 
-  // 逐行读取 SSE 流
   const reader = response.body?.getReader()
   if (!reader) {
     callbacks.onError('Response body is not readable')
@@ -69,32 +69,43 @@ export async function sendChatMessage(
   const decoder = new TextDecoder()
   let buffer = ''
 
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
 
-    buffer += decoder.decode(value, { stream: true })
+      buffer += decoder.decode(value, { stream: true })
 
-    // 按行解析 SSE: data: <content>\n\n
-    const lines = buffer.split('\n\n')
-    buffer = lines.pop() || '' // 保留未完成的行
+      // 按 \n\n 拆分 SSE 事件
+      const lines = buffer.split('\n\n')
+      buffer = lines.pop() || ''
 
-    for (const line of lines) {
-      const trimmed = line.trim()
-      if (!trimmed || !trimmed.startsWith('data:')) continue
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed || !trimmed.startsWith('data:')) continue
 
-      const content = trimmed.substring(5).trim()
-      if (content === '[DONE]') {
-        callbacks.onDone()
-        return
+        // 去除 "data:" 前缀 (5 个字符), 保留内容原样 (不 trim, 不做任何转义处理)
+        const content = trimmed.substring(5)
+
+        // 信号检测
+        if (content === '[DONE]') {
+          callbacks.onDone()
+          return
+        }
+        if (content.startsWith('[ERROR]')) {
+          callbacks.onError(content.substring(7))
+          return
+        }
+
+        // 每行追加 \n 还原 LLM 原始输出中的换行
+        callbacks.onChunk(content + '\n')
       }
-      if (content.startsWith('[ERROR]')) {
-        callbacks.onError(content.substring(7).trim())
-        return
-      }
-      callbacks.onChunk(content)
     }
+  } catch (e) {
+    callbacks.onError(`Stream error: ${e}`)
+    return
   }
 
+  // 流自然结束
   callbacks.onDone()
 }

@@ -86,7 +86,7 @@ jzo2o-ai/                         ← Java Spring Boot
 ```
 POST /chat/completions  {messages: [...]}
   → AsyncOpenAI.chat.completions.create(stream=True)
-  → async for chunk: yield token + "\n"
+  → async for chunk: yield token
   → StreamingResponse (text/plain)
 ```
 
@@ -100,10 +100,9 @@ async def chat_completions(request: ChatCompletionRequest):
     async def generate():
         try:
             async for content_chunk in stream_chat(messages_dict):
-                yield content_chunk + "\n"  # 纯文本，换行分隔
-            yield "[DONE]\n"
+                yield content_chunk
         except Exception as e:
-            yield f"[ERROR] {str(e)}\n"
+            yield f"[ERROR] {str(e)}"
 
     return StreamingResponse(generate(), media_type="text/plain")
 ```
@@ -121,10 +120,8 @@ public SseEmitter chat(ChatRequestDTO request) {
 
     aiEngineClient.streamChat(messages).subscribe(
         rawChunk -> {
-            for (String token : splitTokens(rawChunk)) {
-                emitter.send(SseEmitter.event().data(token)); // SSE 包装发前端
-                responseBuilder.append(token);
-            }
+            emitter.send(SseEmitter.event().data(rawChunk));
+            responseBuilder.append(rawChunk).append("\n");
         },
         error -> emitter.completeWithError(error),
         () -> {
@@ -157,6 +154,35 @@ public SseEmitter chat(ChatRequestDTO request) {
 ```
 
 4 个新组件：`ChatFloatingButton` / `ChatWindow` / `ChatMessageList` / `ChatInput`，原生 `fetch` + `ReadableStream` 消费 SSE。
+
+### 4.5 第五步：富文本渲染升级
+
+AI 聊天窗原本只支持纯文本显示。为了支持代码高亮、数学公式、流程图，引入三套渲染引擎：
+
+| 库 | 用途 | 语法 |
+|----|------|------|
+| **markdown-it** | Markdown → HTML | `**粗体**` `# 标题` `- 列表` |
+| **KaTeX** | LaTeX 数学公式 | `$E=mc^2$` `$$\int_0^\infty$$` |
+| **Mermaid** | 流程图/时序图 | ` ```mermaid\ngraph TD\n...\n``` ` |
+
+**Markdown 和 LaTeX 直接书写即可**（不需要代码块），**Mermaid 需要放在 ````mermaid` 代码块中**。
+
+架构设计：
+
+```
+前端 chat.ts: SSE 流解析 → 每行补 \n → 拼接完整文档
+    ↓
+ChatMarkdown.vue: v-html 渲染
+    ↓
+markdown.ts:
+  1. LaTeX 预处理: $...$ / $$...$$ → KaTeX HTML → 纯字母占位符
+  2. markdown-it 渲染 → HTML
+  3. 恢复占位符 → KaTeX HTML
+    ↓
+ChatMarkdown.vue onMounted: mermaid.run() → SVG
+```
+
+**LaTeX 占位符设计要点**：必须使用纯字母数字组合（如 `KATEXINLINE0000END`），避免与 markdown 语法冲突。初版用 `__KATEX__`（双下划线），被 markdown-it 当成粗体语法 `<strong>` 包裹，导致 KaTeX HTML 还原失败。
 
 ## 五、踩坑记录
 
@@ -234,6 +260,60 @@ Python → Java:  token1\ntoken2\n...  (text/plain, 简单换行)
 Java → 前端:   data: token1\n\ndata: token2\n\n  (text/event-stream)
 ```
 
+### 5.6 Markdown/Mermaid/LaTeX 全部不渲染 — 换行符传输链丢失
+
+**现象**：前端 AI 对话只有粗体/斜体（行内语法）生效，所有块级语法（`# 标题`、`- 列表`、`> 引用`、`` ``` 代码块 ``` ``）以及 Mermaid 图表、LaTeX 公式全部不显示。
+
+**排查过程**：
+
+1. **Node.js 测试 markdown-it + KaTeX 管道** — 全部语法正常输出 HTML，确认渲染引擎本身无问题
+2. **浏览器 Elements 面板检查** — 发现所有内容挤在 `<code>` 标签内无换行，`mermaid` 和 `graph` 之间无空格，确认换行符丢失
+3. **Java 端代码审查** — 发现 `splitTokens()` 方法 `raw.split("\n").map(String::trim).filter(s -> !s.isEmpty())` 将 LLM 输出中的 markdown 换行符当作 token 分隔符丢弃
+4. **添加双向日志** — Java 端 `[DEBUG] rawChunk` + 前端 `[DEBUG] chunk`，对比发现 Java 日志中所有 chunk `hasNewline=false`，每个 Flux 元素恰好是原始内容的一行
+5. **定位行解码器** — WebClient `bodyToFlux(String.class)` 底层 Reactor Netty 使用行解码器，`\n` 在到达 Java 代码之前就已被当作行边界丢弃
+
+**根因**：三层协议设计缺陷叠加
+
+- **原始设计**：Python 用 `\n` 做 token 分隔符（`content_chunk + "\n"`），Java 按 `\n` split + trim + filter empty。LLM 输出本身含 `\n`（markdown 段落换行），与分隔符同字符无法区分
+- **后续发现**：即使 Python 不添加分隔符，WebClient 的行解码器也会自动按 `\n` 拆分响应流，`\n` 字符在 Java 代码根本不可见
+
+**尝试过的失败方案**：
+
+| 方案 | 问题 |
+|------|------|
+| 分隔符改为 `\x1e`（ASCII RS） | 控制字符在 SSE/HTTP 传输中出现未定义行为 |
+| Java 转义 `\n` → `\\n`，前端解转义 | LaTeX 命令 `\nabla`、`\neq` 中的 `\n` 被前端正则 `/\\n/g` 误匹配替换 |
+
+**最终方案**：零分隔符 + 行末追加
+
+```
+Python:   yield content_chunk                    (LLM token 原样输出)
+Java:     emitter.send(SseEmitter.event().data(rawChunk))  (每行直接发送)
+前端:     callbacks.onChunk(content + '\n')      (每行末补 \n 还原文档)
+```
+
+**为何这个方案正确：**
+- 每个 SSE event 是单行纯文本，SSE 协议零冲突
+- 不做任何转义/解转义，LaTeX 命令（`\nabla`、`\neq` 等）完全不受影响
+- 空白行自然保留：WebClient 行解码 → `""` → SSE `data:` → 前端补 `\n` → 输出 `"\n"` 空行 → markdown 段落分隔
+- Mermaid 代码块内换行正确保留，`mermaid.render()` SVG 渲染正常
+
+**教训：**
+- **传输层不要对内容做假设性拆分或转义**。内容格式的语义应由渲染层理解，传输层职责仅限于可靠搬运
+- **行解码器是隐式协议层**。`bodyToFlux(String.class)` 的默认行为不是"按网络缓冲切分"，而是"按行切分"。设计跨语言流式协议时必须明确每一层的编解码行为
+- **分隔符方案天生有冲突风险**。任何可能在内容中出现的字符都不适合做分隔符。追加式（在边界外补回结构信息）比转义式（修改内容本身）更稳健
+- **双向日志对比是最有效的调试手段**。在 Java 和前端同时打印 chunk 内容，可以精确定位数据在链路的哪一层丢失
+
+### 5.7 占位符被 markdown-it 误解析
+
+**现象**：LaTeX 公式无法渲染。
+
+**根因**：用于保护 KaTeX HTML 的占位符 `__KATEX_INLINE_0__` 两端的 `__` 被 markdown-it 当作粗体语法 `<strong>KATEX_INLINE_0</strong>` 包裹，后续 `restorePlaceholders` 无法匹配到正确的占位符文本。
+
+**修复**：改用纯字母数字组合 `KATEXINLINE0000END`，零 markdown 语义。
+
+> **教训**：在 markdown 管道中插入元数据时，占位符必须对 markdown 解析器透明。最简单的做法是使用不包含任何 markdown 特殊字符（`*`、`_`、`[`、`]` 等）的纯字母数字标识符。
+
 ## 六、启动顺序
 
 ```
@@ -249,11 +329,11 @@ Java → 前端:   data: token1\n\ndata: token2\n\n  (text/event-stream)
 
 | 模块 | 新增文件数 | 修改文件数 |
 |------|-----------|-----------|
-| jzo2o-ai-engine | 13 | 0 |
-| jzo2o-ai | 16 | 0 |
+| jzo2o-ai-engine | 13 | 1 (`app/api/chat.py`) |
+| jzo2o-ai | 16 | 1 (`ChatServiceImpl.java`) |
 | jzo2o-gateway | 0 | 1 (`bootstrap.yml`) |
 | jzo2o-framework/jzo2o-mvc | 0 | 1 (`PackResultFilter.java`) |
-| project-xzb-PC-vue3-java | 5 | 1 (`layouts/index.vue`) |
+| project-xzb-PC-vue3-java | 7 | 3 (`layouts/index.vue`, `App.vue`, `ChatMessageList.vue`) |
 | .gitignore | 1 | 0 |
 
 **总侵入度**：现有 Java 业务模块零改动，框架层 1 行，Gateway 1 条路由，前端布局文件 4 行。

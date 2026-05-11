@@ -1,14 +1,11 @@
 <template>
   <router-view :class="[mode]" />
-  <!--  项目说明浮窗 -->
-    <ExpBall></ExpBall>
 </template>
 
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSettingStore } from '@/store'
-import ExpBall from '@/components/expBall/ExpBall.vue'
 
 const route = useRoute()
 const store = useSettingStore()

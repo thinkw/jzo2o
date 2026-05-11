@@ -17,14 +17,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * 聊天服务实现 — 鉴权、持久化、SSE代理
- * Python引擎返回纯文本 token 流(换行分隔), 由本层包装为 SSE 发给前端
+ * Python引擎返回原始 LLM token 流, 由本层直接包装为 SSE 发给前端
  */
 @Slf4j
 @Service
@@ -61,35 +60,30 @@ public class ChatServiceImpl implements ChatService {
         SseEmitter emitter = new SseEmitter(AiConstants.SSE_TIMEOUT);
 
         // 7. 异步流式代理
+        // WebClient 的 bodyToFlux 使用行解码器, 每个 Flux 元素是原始响应的
+        // 一行内容 (不含 \n)。直接发送单行 SSE 给前端, 前端负责在每个 chunk
+        // 后追加 \n 来还原原始文档结构。不转义, 避免与 LaTeX 命令冲突。
         StringBuilder responseBuilder = new StringBuilder();
 
         aiEngineClient.streamChat(messages)
                 .subscribe(
                         rawChunk -> {
-                            // Python 返回纯文本 token (换行分隔), 包成 SSE 发前端
-                            List<String> tokens = splitTokens(rawChunk);
-                            for (String token : tokens) {
-                                if ("[DONE]".equals(token)) {
-                                    return;
-                                }
-                                if (token.startsWith("[ERROR]")) {
-                                    log.error("Python引擎返回错误: {}", token);
-                                    return;
-                                }
-                                try {
-                                    emitter.send(SseEmitter.event().data(token));
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                responseBuilder.append(token);
+                            if (rawChunk.startsWith("[ERROR]")) {
+                                log.error("Python引擎返回错误: {}", rawChunk);
+                                return;
                             }
+                            try {
+                                emitter.send(SseEmitter.event().data(rawChunk));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            responseBuilder.append(rawChunk).append("\n");
                         },
                         error -> {
                             log.error("聊天流式传输异常: {}", error.getMessage());
                             emitter.completeWithError(error);
                         },
                         () -> {
-                            // 流结束: 持久化助手回复
                             String fullResponse = responseBuilder.toString();
                             if (StrUtil.isNotBlank(fullResponse)) {
                                 saveRecord(userId, userType, sessionId, AiConstants.ROLE_ASSISTANT, fullResponse);
@@ -100,19 +94,6 @@ public class ChatServiceImpl implements ChatService {
                 );
 
         return emitter;
-    }
-
-    /**
-     * 按换行拆分 token, 过滤空行
-     */
-    private List<String> splitTokens(String raw) {
-        if (StrUtil.isBlank(raw)) {
-            return List.of();
-        }
-        return Arrays.stream(raw.split("\n"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
     }
 
     /**

@@ -17,22 +17,21 @@ async def chat_completions(request: ChatCompletionRequest):
     流式聊天接口
 
     请求: {"messages": [...], "stream": true}
-    响应: text/plain, 每行一个 token, [DONE] 结束
+    响应: text/plain, 逐 token 直接输出 (原样, 不加分隔符)
+          Java 端用 WebClient.bodyToFlux 接收后直接包 SSE 转发前端
     """
     logger.info("收到聊天请求, 消息数: %d", len(request.messages))
 
     messages_dict = [m.model_dump() for m in request.messages]
 
     async def generate():
-        """逐 token 输出，换行分隔"""
+        """逐 token 原样输出, 由 LLM 控制内容格式"""
         try:
             async for content_chunk in stream_chat(messages_dict):
-                # 纯文本 token + 换行，Java端负责SSE包装
-                yield content_chunk + "\n"
-            yield "[DONE]\n"
+                yield content_chunk
         except Exception as e:
             logger.error("LLM 流式调用异常: %s", str(e))
-            yield f"[ERROR] {str(e)}\n"
+            yield f"[ERROR] {str(e)}"
 
     return StreamingResponse(
         generate(),

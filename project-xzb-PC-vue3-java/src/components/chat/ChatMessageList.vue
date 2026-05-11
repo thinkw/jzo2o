@@ -8,12 +8,17 @@
       :class="{ user: msg.role === 'user', assistant: msg.role === 'assistant' }"
     >
       <div class="chat-avatar">{{ msg.role === 'user' ? '我' : 'AI' }}</div>
-      <div class="chat-bubble">{{ msg.content }}</div>
+      <div class="chat-bubble">
+        <ChatMarkdown :content="msg.content" />
+      </div>
     </div>
     <!-- 加载中 -->
     <div v-if="loading && streamingContent" class="chat-message assistant">
       <div class="chat-avatar">AI</div>
-      <div class="chat-bubble streaming">{{ streamingContent }}<span class="cursor">|</span></div>
+      <div class="chat-bubble streaming">
+        <ChatMarkdown :content="streamingContent" />
+        <span class="cursor">|</span>
+      </div>
     </div>
     <div v-if="loading && !streamingContent" class="chat-message assistant">
       <div class="chat-avatar">AI</div>
@@ -28,6 +33,7 @@
 
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
+import ChatMarkdown from './ChatMarkdown.vue'
 
 interface ChatMsg {
   role: 'user' | 'assistant'
