@@ -5,7 +5,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import svgLoader from 'vite-svg-loader'
 
 import path from 'path'
-import { withScopeId } from 'vue'
 
 const CWD = process.cwd()
 
@@ -17,7 +16,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     define: {},
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src')
+        '@': path.resolve(__dirname, './src'),
+        // markstream-vue 未安装的可选依赖 → 空桩
+        'stream-monaco': path.resolve(__dirname, './stubs/stream-monaco.js'),
+        '@antv/infographic': path.resolve(__dirname, './stubs/@antv-infographic.js'),
+        '@terrastruct/d2': path.resolve(__dirname, './stubs/@terrastruct-d2.js'),
       }
     },
 
@@ -62,15 +65,18 @@ export default ({ mode }: ConfigEnv): UserConfig => {
           target: 'http://localhost:11500',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, '')
-          // https://jzo2o-institution-test.itheima.net/api
-          // http://172.17.2.58/api
-          // bypass(req,res,options){
-          //   const proxyUrl = new URL (req.url , (options.target)as string)?.href
-          //   req.headers['refererss'] = proxyUrl
-          //   res.setHeader('refererss', proxyUrl)
-          // }
         }
       }
+    },
+
+    build: {
+      rollupOptions: {
+        external: ['stream-monaco', '@antv/infographic', '@terrastruct/d2', 'vue-i18n']
+      }
+    },
+
+    optimizeDeps: {
+      exclude: ['stream-monaco', '@antv/infographic', '@terrastruct/d2']
     }
   }
 }
