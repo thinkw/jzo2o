@@ -16,7 +16,7 @@
     <div v-if="loading && streamingContent" class="chat-message assistant">
       <div class="chat-avatar">AI</div>
       <div class="chat-bubble streaming">
-        <ChatMarkdown :content="streamingContent" />
+        <ChatMarkdown :content="streamingContent" :streaming="true" />
         <span class="cursor">|</span>
       </div>
     </div>

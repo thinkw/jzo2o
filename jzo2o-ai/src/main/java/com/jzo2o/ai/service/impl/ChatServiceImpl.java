@@ -3,6 +3,8 @@ package com.jzo2o.ai.service.impl;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.jzo2o.ai.client.AiEngineClient;
+import com.jzo2o.ai.client.AiEngineWebSocketClient;
+import com.jzo2o.ai.properties.AiEngineProperties;
 import com.jzo2o.ai.constants.AiConstants;
 import com.jzo2o.ai.mapper.AiChatRecordMapper;
 import com.jzo2o.ai.model.domain.AiChatRecord;
@@ -33,6 +35,12 @@ public class ChatServiceImpl implements ChatService {
     private AiEngineClient aiEngineClient;
 
     @Resource
+    private AiEngineWebSocketClient aiEngineWebSocketClient;
+
+    @Resource
+    private AiEngineProperties aiEngineProperties;
+
+    @Resource
     private AiChatRecordMapper aiChatRecordMapper;
 
     @Override
@@ -59,39 +67,55 @@ public class ChatServiceImpl implements ChatService {
         // 6. 创建 SseEmitter (5分钟超时)
         SseEmitter emitter = new SseEmitter(AiConstants.SSE_TIMEOUT);
 
-        // 7. 异步流式代理
-        // WebClient 的 bodyToFlux 使用行解码器, 每个 Flux 元素是原始响应的
-        // 一行内容 (不含 \n)。直接发送单行 SSE 给前端, 前端负责在每个 chunk
-        // 后追加 \n 来还原原始文档结构。不转义, 避免与 LaTeX 命令冲突。
-        StringBuilder responseBuilder = new StringBuilder();
+        // 7. 根据传输模式选择 HTTP 或 WebSocket
+        if ("ws".equals(aiEngineProperties.getMode())) {
+            // WebSocket 传输: 建立 per-session 连接, 双向 JSON 帧通信
+            StringBuffer responseBuffer = new StringBuffer();
 
-        aiEngineClient.streamChat(messages)
-                .subscribe(
-                        rawChunk -> {
-                            if (rawChunk.startsWith("[ERROR]")) {
-                                log.error("Python引擎返回错误: {}", rawChunk);
-                                return;
-                            }
-                            try {
-                                emitter.send(SseEmitter.event().data(rawChunk));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                            responseBuilder.append(rawChunk).append("\n");
-                        },
-                        error -> {
-                            log.error("聊天流式传输异常: {}", error.getMessage());
-                            emitter.completeWithError(error);
-                        },
-                        () -> {
-                            String fullResponse = responseBuilder.toString();
-                            if (StrUtil.isNotBlank(fullResponse)) {
-                                saveRecord(userId, userType, sessionId, AiConstants.ROLE_ASSISTANT, fullResponse);
-                            }
-                            emitter.complete();
-                            log.info("聊天会话完成, sessionId: {}", sessionId);
+            aiEngineWebSocketClient.connectAndStream(sessionId, messages, emitter,
+                    token -> responseBuffer.append(token).append("\n"),
+                    () -> {
+                        String fullResponse = responseBuffer.toString();
+                        if (StrUtil.isNotBlank(fullResponse)) {
+                            saveRecord(userId, userType, sessionId, AiConstants.ROLE_ASSISTANT, fullResponse);
                         }
-                );
+                        log.info("聊天会话完成(WS), sessionId: {}", sessionId);
+                    });
+        } else {
+            // HTTP 传输 (原有逻辑)
+            // WebClient 的 bodyToFlux 使用行解码器, 每个 Flux 元素是原始响应的
+            // 一行内容 (不含 \n)。直接发送单行 SSE 给前端, 前端负责在每个 chunk
+            // 后追加 \n 来还原原始文档结构。不转义, 避免与 LaTeX 命令冲突。
+            StringBuilder responseBuilder = new StringBuilder();
+
+            aiEngineClient.streamChat(messages)
+                    .subscribe(
+                            rawChunk -> {
+                                if (rawChunk.startsWith("[ERROR]")) {
+                                    log.error("Python引擎返回错误: {}", rawChunk);
+                                    return;
+                                }
+                                try {
+                                    emitter.send(SseEmitter.event().data(rawChunk));
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                responseBuilder.append(rawChunk).append("\n");
+                            },
+                            error -> {
+                                log.error("聊天流式传输异常: {}", error.getMessage());
+                                emitter.completeWithError(error);
+                            },
+                            () -> {
+                                String fullResponse = responseBuilder.toString();
+                                if (StrUtil.isNotBlank(fullResponse)) {
+                                    saveRecord(userId, userType, sessionId, AiConstants.ROLE_ASSISTANT, fullResponse);
+                                }
+                                emitter.complete();
+                                log.info("聊天会话完成, sessionId: {}", sessionId);
+                            }
+                    );
+        }
 
         return emitter;
     }

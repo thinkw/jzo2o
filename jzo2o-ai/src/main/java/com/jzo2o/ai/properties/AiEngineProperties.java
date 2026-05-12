@@ -12,8 +12,14 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "jzo2o.ai.engine")
 public class AiEngineProperties {
 
-    /** Python引擎地址 */
+    /** Python引擎HTTP地址 (保留, 向后兼容) */
     private String baseUrl = "http://localhost:8000";
+
+    /** Python引擎WebSocket地址 */
+    private String wsUrl = "ws://localhost:8000";
+
+    /** 传输模式: ws(WebSocket) / http(HTTP), 默认 ws */
+    private String mode = "ws";
 
     /** 连接超时 (毫秒) */
     private Integer connectTimeout = 5000;

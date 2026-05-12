@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, nextTick } from 'vue'
-import { renderMarkdown } from '@/utils/markdown'
+import { renderMarkdown, renderMarkdownStreaming } from '@/utils/markdown'
 import mermaid from 'mermaid'
 // 直接导入 KaTeX CSS (Vite 原生支持 CSS import)
 import 'katex/dist/katex.min.css'
@@ -27,7 +27,11 @@ function initMermaid() {
   }
 }
 
-const props = defineProps<{ content: string }>()
+const props = defineProps<{
+  content: string
+  /** 是否为流式输出 — 流式时裁掉尾部不完整的 LaTeX, 避免闪烁 */
+  streaming?: boolean
+}>()
 
 const containerRef = ref<HTMLElement>()
 const renderedHtml = ref('')
@@ -69,7 +73,9 @@ async function doRender(content: string) {
     return
   }
 
-  renderedHtml.value = renderMarkdown(content)
+  renderedHtml.value = props.streaming
+    ? renderMarkdownStreaming(content)
+    : renderMarkdown(content)
   await nextTick()
   await renderMermaidDiagrams()
 }
