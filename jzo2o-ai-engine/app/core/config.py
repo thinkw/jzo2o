@@ -11,6 +11,11 @@ class Settings:
     llm_api_base: str = os.getenv("LLM_API_BASE", "https://api.openai.com/v1")
     llm_api_key: str = os.getenv("LLM_API_KEY", "")
     llm_model: str = os.getenv("LLM_MODEL", "gpt-4o-mini")
+    llm_temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.0"))
+    llm_max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "4096"))
+
+    # 工具配置
+    tool_timeout: int = int(os.getenv("TOOL_TIMEOUT", "120"))
 
     # 服务配置
     server_host: str = os.getenv("SERVER_HOST", "0.0.0.0")
