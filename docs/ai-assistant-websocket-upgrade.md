@@ -315,7 +315,14 @@ LLM 输出 → Python WS → Java SSE → 前端累积文本 → markdown-it 渲
 
 2. **气泡空白行**：markstream-vue CSS 变量 `--ms-flow-paragraph-y: 1.5em` 给段落上下各加 1.5em margin。解决：`.chat-markdown .markstream-vue` 覆写 flow 间距变量为 0。
 
-3. **代码块语法高亮未启用**：markstream-vue 默认用 Monaco 编辑器渲染代码块，Monaco 未安装时回退到纯 `<pre><code>`。当前接受降级，代码块以基础 CSS 样式渲染，语法高亮后续单独立项。
+3. **代码块语法高亮不生效**：markstream-vue 默认用 Monaco 编辑器（`CodeBlockNode`）渲染代码块，Monaco 未安装时回退到纯 `<pre><code>`。解决：通过 `setCustomComponents` 全局注册 Shiki 渲染器，替换默认的 Monaco：
+
+   ```ts
+   import { MarkdownCodeBlockNode, setCustomComponents } from 'markstream-vue'
+   setCustomComponents({ code_block: MarkdownCodeBlockNode })
+   ```
+
+   之前尝试 `:components="{ code: MarkdownCodeBlockNode }"` prop 不生效——markstream-vue 的组件覆写走 `setCustomComponents` 全局注册，不走 `components` prop。关键点：参数 key 是 `code_block`（下划线），与解析器的 node type 一致，不是 `code`。
 
 ## 七、文件变更总览
 

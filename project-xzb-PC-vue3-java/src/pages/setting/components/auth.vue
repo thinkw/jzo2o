@@ -3,8 +3,12 @@
   <t-dialog
     v-model:visible="formVisible"
     :header="title"
-    :width="certificationStatus === 0 ? 628 : 480"
+    :width="certificationStatus === 0 ? 698 : 550"
     :on-close="onClickCloseBtn"
+    :cancel-btn="certificationStatus === 0 ? '取消' : null"
+    :confirm-btn="certificationStatus === 0 ? '提交' : '重新认证'"
+    @on-cancel="onClickCloseBtn"
+    @on-confirm="handleConfirm"
   >
     <template #body>
       <t-row v-if="certificationStatus === 0">
@@ -74,30 +78,6 @@
         </div>
       </div>
     </template>
-    <template #footer>
-      <div
-        class="bt btn-submit reset"
-        v-if="certificationStatus === 3"
-        @click="handleResetAuth"
-      >
-        重新认证
-      </div>
-      <div
-        v-if="certificationStatus === 0"
-        class="bt bt-grey btn-submit"
-        @click="onClickCloseBtn"
-      >
-        <span>取消</span>
-      </div>
-      <div
-        v-if="certificationStatus === 0"
-        type="submit"
-        class="bt btn-submit"
-        @click="handleSubmit"
-      >
-        <span>提交</span>
-      </div>
-    </template>
   </t-dialog>
 </template>
 
@@ -149,6 +129,16 @@ const title = ref('资质认证')
 const reason = ref('')
 // 弹窗
 const formVisible = ref(false)
+
+const handleConfirm = () => {
+  if (certificationStatus.value === 3) {
+    // 重新认证
+    handleResetAuth()
+  } else {
+    // 提交表单
+    handleSubmit()
+  }
+}
 
 const handleSubmit = () => {
   if (!formData.value.name) {
@@ -251,20 +241,6 @@ watch(
   display: block !important;
 }
 /* @import url(); 引入css类 */
-:deep(.t-dialog__footer) {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 32px 24px;
-}
-.reset {
-  padding: 6px 8px;
-  width: auto !important;
-  line-height: 22px;
-}
-.btn-submit {
-  margin-left: 15.5px;
-  width: 60px;
-}
 :deep(.t-form-item__cityCode) {
   margin-bottom: 30px !important;
 }

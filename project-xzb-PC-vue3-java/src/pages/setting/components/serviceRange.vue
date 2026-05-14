@@ -66,11 +66,13 @@
       </t-row>
     </template>
     <template #footer>
-      <div class="bt bt-grey btn-submit" @click="onClickCloseBtn">
-        <span>取消</span>
-      </div>
-      <div type="submit" class="bt btn-submit" @click="handleSubmit">
-        <span>保存</span>
+      <div class="footerContainer">
+        <div class="bt bt-grey btn-submit" @click="onClickCloseBtn">
+          <span>取消</span>
+        </div>
+        <div type="submit" class="bt btn-submit" @click="handleSubmit">
+          <span>保存</span>
+        </div>
       </div>
     </template>
   </t-dialog>
@@ -202,14 +204,20 @@ watch(
 </script>
 <style scoped lang="less">
 /* @import url(); 引入css类 */
-:deep(.t-dialog__footer) {
+.footerContainer {
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   padding: 0 32px 24px;
+  width: 100%;
 }
 .btn-submit {
   margin-left: 15.5px;
   width: 60px;
+}
+:deep(.t-dialog__footer) {
+  display: block !important;
+  padding: 0;
 }
 :deep(.t-form-item__cityCode) {
   margin-bottom: 30px !important;

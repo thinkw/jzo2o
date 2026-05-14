@@ -13,6 +13,7 @@ li.t-menu__item {
 
 
 // 组件库的布局重写 layout rewrite
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-layout__sider {
   //左侧导航栏统一改为208px
   width: 208px;
@@ -24,13 +25,16 @@ li.t-menu__item {
     }
   }
 
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 ////折叠后依然为64px
 .compact {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-layout__sider {
     width: 64px;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
   .czri-sidebar-compact {
     .czri-side-nav {
@@ -43,9 +47,11 @@ li.t-menu__item {
   .top {
 
     .t-menu__item.t-is-active,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
     .t-menu__item:hover {
       background-color: var(--color-bk12) !important;
-    }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+    } /* DTODO ↑ */
   }
 }
 
@@ -117,17 +123,21 @@ li.t-menu__item {
     }
 
     // 滚动条样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
     &::-webkit-scrollbar {
       width: 8px;
       background: var(--color-bk10);
-    }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+    } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
     &::-webkit-scrollbar-thumb {
       border-radius: 4px;
       border: 2px solid transparent;
       background-clip: content-box;
       background-color: var(--color-border);
-    }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+    } /* DTODO ↑ */
   }
 
   &-footer-layout {
@@ -182,9 +192,11 @@ li.t-menu__item {
       justify-content: center;
       width: 100%;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:hover {
         cursor: pointer;
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
     }
 
     &-logo-t-logo {
@@ -236,9 +248,11 @@ li.t-menu__item {
       justify-content: center;
       width: 100%;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:hover {
         cursor: pointer;
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
     }
 
     &-logo-t-logo {
@@ -259,6 +273,7 @@ li.t-menu__item {
       transition: all 0.3s;
     }
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
     .t-menu__item {
       .t-menu__content {
         color: rgba(#fff, 0.8);
@@ -303,18 +318,22 @@ li.t-menu__item {
           stroke: var(--color-bk2);
         }
       }
-    }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+    } /* DTODO ↑ */
 
     // 二级菜单
     .menuBox {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       .t-icon {
         path {
           fill: rgba(#fff, 0.8);
         }
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
     }
 
     // 二级菜单选中的当前样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
     .t-menu__sub {
       .t-is-active {
         .t-menu__content {
@@ -329,7 +348,8 @@ li.t-menu__item {
           }
         }
       }
-    }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+    } /* DTODO ↑ */
   }
 
   .modeStyle &-header-menu-fixed {
@@ -351,9 +371,11 @@ li.t-menu__item {
 }
 
 .route-tabs-dropdown {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-icon {
     margin-right: 8px;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 .logo-container {
@@ -368,71 +390,94 @@ li.t-menu__item {
   opacity: 0.4;
 }
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__popup {
   z-index: 1000;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .container-base-margin-top {
   margin-top: 16px;
 }
 
 //表格最大宽度
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table {
   // max-width: calc(100vw - 305px);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-layout.t-layout--with-sider>.t-layout {
   min-width: 1000px;
   flex: 1;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 //左侧菜单收起后列表自适应
 .czri-content-compact {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-table {
     max-width: initial;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 // 表格顶部
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table th {
   font-family: PingFangSC;
   color: var(--color-bk1);
   font-weight: 500;
   background-color: var(--color-tableHeader-bg) !important;
   padding-left: var(--space-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table td {
   padding-left: var(--space-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table--column-resizable:not(.t-table--bordered) thead.t-table__header:hover th:not(:last-child) {
   border-right: none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table--column-resizable:not(.t-table--bordered) thead.t-table__header:hover th {
   border-top: none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 表格行hover
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table--hoverable tbody tr:hover {
   background-color: var(--color-bk10);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .tableBoxs .t-table__body tr.t-table__empty-row:hover {
   background-color: rgba(255, 255, 255, 0);
 }
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table td {
   color: var(--color-bk3);
   border-color: var(--color-border);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__ellipsis {
   width: auto;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 表格顶栏
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__header {
   height: 49px;
   border-radius: 4px 4px 0 0;
@@ -440,7 +485,8 @@ li.t-menu__item {
   tr {
     border-radius: 4px 4px 0 0;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .tableBoxs {
   margin: var(--space-main-min) var(--space-main);
@@ -462,24 +508,31 @@ li.t-menu__item {
   color: var(--color-error);
   cursor: pointer;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &:hover {
     // 透明度
     color: var(--color-error1);
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
   // 点击后改变颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &:active {
     color: var(--color-error2);
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
   // 禁用的颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &.disabled {
     color: var(--color-error3);
     cursor: not-allowed;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 .status-dot {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &::before {
     content: '';
     width: 6px;
@@ -489,38 +542,49 @@ li.t-menu__item {
     margin-right: 8px;
     // 居中
     vertical-align: middle;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 // 状态0
 .status-dot-0 {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &::before {
     background-color: #0398FF;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 // 状态1
 .status-dot-1 {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &::before {
     background-color: var(--color-error);
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 .status-dot-2 {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &::before {
     background-color: var(--color-success);
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 .status-dot-3 {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &::before {
     background-color: var(--color-bk4);
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-range-picker {
   width: 100%;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 操作区域文字按钮右分割线
 .btn-split-right {
@@ -599,6 +663,7 @@ li.t-menu__item {
 
 
 // 筛选按钮
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__filter-icon {
 
   // hover时改变颜色
@@ -606,23 +671,30 @@ li.t-menu__item {
   &.active {
     color: var(--color-main);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 表头标签
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-form__label {
   color: var(--color-bk2);
   padding-right: 0;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 表单输入框
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-input__inner {
   color: var(--color-bk1);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 表单placeholder颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-input__inner::-webkit-input-placeholder {
   color: var(--color-bk4);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 整体按钮
 button {
@@ -645,17 +717,22 @@ button {
 }
 
 // 分页器选中状态
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__pagination {
   padding: var(--space-main) 0 var(--space-main) var(--space-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-pagination__number.t-is-current {
   border: 1px solid var(--color-main);
   color: var(--color-white);
   background-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 分页器边框
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-pagination__number {
   border: 1px solid #dcdcdc;
   color: var(--color-bk1);
@@ -673,39 +750,53 @@ button {
   &.t-is-current {
     color: var(--color-white);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 翻页前进后退按钮
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-pagination__btn {
   color: var(--color-bk1);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 日期选择器选中状态
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell--active .t-date-picker__cell-inner {
   color: rgba(255, 255, 255, 0.9) !important;
   background-color: var(--color-main);
   border-radius: 3px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell:hover .t-date-picker__cell-inner {
   box-shadow: inset 0 0 0 1px var(--color-main) !important;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 // hover时区间颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell--hover-highlight::after{
   background-color: #fff0ed;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 日期选择器当日样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell--now .t-date-picker__cell-inner {
   color: var(--color-main);
   background-color: #fff0ed;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 日期区间背景样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell--highlight::before {
   background-color: #fff0ed;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 // 选中后
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell--highlight{
   .t-date-picker__cell--hover-highlight::after{
     background-color: #0000000f;
@@ -713,29 +804,39 @@ button {
 .t-date-picker__cell-inner{
   color: var(--color-bk1);
 }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 日期区间选择器tag
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-button .t-button__text {
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 日期时间选择器日期
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell-inner {
   color: var(--color-bk1);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 日期时间选择器日期未上月和下月
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell--additional .t-date-picker__cell-inner {
   color: var(--color-bk6);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 日期时间选择器日期hover时框线颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-date-picker__cell--active .t-date-picker__cell-inner {
   box-shadow: inset 0 0 0 1px var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 列表筛选框按钮
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__filter--bottom-buttons {
   .t-button {
     .t-button__text {
@@ -748,24 +849,38 @@ button {
   .t-button:nth-child(2) .t-button__text {
     color: rgba(255, 255, 255, 0.9);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 弹窗底部按钮
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  
   .t-button {
+    display: inline-flex !important;
+    width: auto !important;
+    margin-left: 16px;
+    
     .t-button__text {
       color: var(--color-bk1);
-      // 设置最后一个按钮的颜色
     }
+  }
+
+  .t-button:first-child {
+    margin-left: 0;
   }
 
   // 设置第二个t-button下的t-button__text的颜色
   .t-button:nth-child(2) .t-button__text {
     color: rgba(255, 255, 255, 0.9);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .formFooter {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-form__controls-content {
     display: block;
     text-align: right;
@@ -774,146 +889,133 @@ button {
       display: inline-block;
       margin-left: 16px;
     }
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
-// 弹窗标题
-.t-dialog--default {
-  padding: 0;
-}
+// 弹窗标题 — TDesign 1.x 改定位方式, 注释旧覆盖
+// .t-dialog--default {
+//   padding: 0;
+// }
 
-// 弹窗头部
-.t-dialog__header {
-  height: 60px;
-  background: var(--color-bk10);
-  border-radius: 8px 8px 0 0;
-  padding: 19.5px 25px 19.5px 24px;
-
-  // 通知提示框标题
-  .t-dialog__header-content {
-    font-family: PingFangSC-SNaNpxibold;
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--color-black);
-  }
-
-  .t-dialog__close {
-    color: var(--color-bk3);
-    width: 28px;
-    height: 28px;
-
-    // 将svg的宽高设置为24px
-    svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    &:hover {
-      background: #e1e6f0;
-    }
-
-    &:active {
-      background: #cdd3e0;
-    }
-  }
-}
+// ── 弹窗样式: TDesign 1.x 弹窗内部结构变化, 旧布局覆盖(header/body/footer padding)
+// ── 与 1.x 默认值叠加导致内容错乱+弹窗过长, 全部注释, 改用 1.x 默认
+// .t-dialog__header {
+//   height: 60px;
+//   background: var(--color-bk10);
+//   border-radius: 8px 8px 0 0;
+//   padding: 19.5px 25px 19.5px 24px;
+//   .t-dialog__header-content {
+//     font-family: PingFangSC-SNaNpxibold;
+//     font-weight: 600;
+//     font-size: 16px;
+//     color: var(--color-black);
+//   }
+//   .t-dialog__close {
+//     color: var(--color-bk3);
+//     width: 28px;
+//     height: 28px;
+//     svg { width: 24px; height: 24px; }
+//     &:hover { background: #e1e6f0; }
+//     &:active { background: #cdd3e0; }
+//   }
+// }
 
 //弹层底部按钮
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-dialog__footer {
   padding: 0 40px 40px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
-.dialog-footer {
-  padding: 8px 0 32px;
-  text-align: right;
+// .dialog-footer {
+//   padding: 8px 0 32px;
+//   text-align: right;
+//   &.scrollFooter { padding-top: 32px; }
+//   button { display: inline-block; margin-left: 16px; }
+// }
 
-  &.scrollFooter {
-    padding-top: 32px;
-  }
+// // 删除警告弹窗样式
+// .baseDialog {
+//   .t-dialog__header { height: auto; background: none; padding: 28px 32px 0; }
+//   .t-dialog__close { margin: -6px -9px 0 0; }
+//   .t-dialog__body { padding-top: 16px; padding-bottom: 0; }
+//   .dialog-footer { padding: 24px 0 32px; }
+// }
 
-  button {
-    display: inline-block;
-    margin-left: 16px;
-  }
-}
+// .t-dialog__body {
+//   padding: 32px;
+//   color: var(--color-bk3);
+// }
 
-// 删除警告弹窗样式
-.baseDialog {
-  .t-dialog__header {
-    height: auto;
-    background: none;
-    padding: 28px 32px 0;
-  }
-
-  .t-dialog__close {
-    margin: -6px -9px 0 0;
-  }
-
-  .t-dialog__body {
-    padding-top: 16px;
-    padding-bottom: 0;
-  }
-
-  .dialog-footer {
-    padding: 24px 0 32px;
-  }
-}
-
-.t-dialog__body {
-  padding: 32px;
-  color: var(--color-bk3);
-}
-
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-form-item__description {
   margin-bottom: 32px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-form__item.t-form__item-with-extra {
   margin-bottom: 32px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
-// 通知提示框内容
-.t-dialog__body__icon {
-  padding: 8px 24px 24px 56px;
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--color-bk3);
-}
+// 通知提示框内容 — TDesign 1.x 默认样式
+// .t-dialog__body__icon {
+//   padding: 8px 24px 24px 56px;
+//   font-weight: 400;
+//   font-size: 14px;
+//   color: var(--color-bk3);
+// }
 
 // 上传图片框
 .t-upload__card-content,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-upload__card-container {
   width: 120px;
   height: 120px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-upload__card-content {
   border: 0 none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 图片内容物
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-upload__card-image {
   max-width: 112%;
   max-height: 112%;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 文本输入框
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-textarea__inner {
   color: var(--color-bk1);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 文本输入框placeholder
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-textarea__inner::-webkit-input-placeholder {
   color: var(--color-bk4);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-textarea .t-resize-none{
   // 禁止左右拖拽，允许上下拖拽
   resize: vertical;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-textarea__limit{
   bottom: auto;
   right: 0;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 上传图片按钮样式
 .upbtn {
@@ -933,6 +1035,7 @@ button {
   cursor: pointer;
   outline: transparent;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &:hover {
     color: var(--color-main);
     border-color: var(--color-main);
@@ -947,9 +1050,11 @@ button {
         }
       }
     }
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
   // 按下时
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &:active {
     color: var(--color-active);
     border-color: var(--color-active);
@@ -964,7 +1069,8 @@ button {
         }
       }
     }
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
   span {
     // 居中
@@ -986,87 +1092,116 @@ button {
 
 // 输入框
 // 输入框hover
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-input:hover {
   border-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 输入框focus
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-input--focused {
   border-color: var(--color-main);
   box-shadow: 0 0 0 2px #FFD8D2;
   &:hover{
     border-color: #F54247;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 下拉选择器
 // 下拉选择器选中状态
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-select-option.t-is-selected {
   background: #FFEFEC;
   color: var(--color-main);
   &:hover{
     background: #FFEFEC;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 // 下拉选择器hover状态
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-select-option:not(.t-is-disabled):not(.t-is-selected):hover {
   background: #f3f3f3;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 组件iconfont颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-input .t-input__prefix>.t-icon {
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 步骤条组件颜色
 // 头部圆头颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps .t-steps-item--process .t-steps-item__icon--number {
   background: var(--color-main);
   border-color: var(--color-main);
   width: 24px;
   height: 24px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps .t-steps-item__icon {
   margin-right: 14px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 头部文字颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps .t-steps-item--process .t-steps-item__title {
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 未选中状态文字提示颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps .t-steps-item__description {
   color: var(--color-bk4);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 步骤条未选中状态标题颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps .t-steps-item__title {
   color: var(--color-bk4);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 步骤条选中状态文字提示颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps .t-steps-item--process .t-steps-item__description {
   color: var(--color-bk3);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps--vertical.t-steps--dot-anchor .t-steps-item--finish .t-steps-item__icon {
   border-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps--vertical.t-steps--dot-anchor.t-steps--positive .t-steps-item--finish:not(:last-child)::before {
   border-right-color: var(--color-main);
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps--vertical.t-steps--dot-anchor .t-steps-item--process .t-steps-item__icon {
   border-color: var(--color-main);
   background: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 折叠
 // 折叠默认背景色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-collapse {
   border: 0 none;
   background: none;
@@ -1075,20 +1210,26 @@ button {
     background: none;
     border: 0 none;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // layout侧边栏图标大小
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item .t-icon {
   width: 28px;
   height: 28px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 侧边栏选中状态
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item.t-is-opened.t-is-active {
   color: var(--color-black);
   // background-color: var(--color-bk11);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item.t-is-opened {
   margin-bottom: 0;
 
@@ -1096,26 +1237,32 @@ button {
     // background-color: transparent !important;
     color: var(--color-main);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 侧边栏未选中状态
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__item {
   color: rgba(0, 0, 0, 0.55);
 
   div {
     display: none !important;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 下层被选中状态(二级菜单)
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item.t-submenu__item.t-is-active:not(.t-is-opened) {
   background: var(--color-bk12);
   color: var(--color-main);
   border-right: 4px solid var(--color-main) !important;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 .czri-sidebar-compact .t-default-menu .t-menu__item.t-is-active:not(.t-is-opened){
   border-right: none;
 }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item.t-is-active:not(.t-is-opened){
   background: var(--color-bk12);
   color: var(--color-main);
@@ -1142,11 +1289,15 @@ button {
       stroke: var(--color-main);
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-submenu .menuBox .t-menu__item.t-is-active:not(.t-is-opened) {
   background: var(--color-bk12);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 // 下层被选中状态(一级菜单)
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-submenu .t-menu__item.t-is-active:not(.t-is-opened) {
   background-color: transparent;
   border-right: none;
@@ -1165,7 +1316,8 @@ button {
       stroke: var(--color-main);
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .menuBox>li.t-menu__item.t-is-active:not(.t-submenu__item) .t-menu__content {
   color: var(--color-black);
@@ -1173,14 +1325,17 @@ button {
 
 
 // 添加侧边线
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-submenu .t-is-opened {
   div {
     li {
       position: relative;
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item:hover:not(.t-is-active):not(.t-is-disabled) {
   background-color: transparent;
   .t-menu__content{
@@ -1216,20 +1371,26 @@ button {
       fill: none;
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item.t-is-opened {
   &::before {
     display: none;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 收起状态下的侧边栏
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu .t-submenu {
   margin-bottom: 14px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 侧边栏选中样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__popup .t-menu__item.t-is-active {
   background-color: var(--color-bk12);
   height: 28px;
@@ -1237,8 +1398,10 @@ button {
   .t-menu__content{
     color: var(--color-main);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__item.t-menu__item-spacer.t-menu__item-spacer--right.t-is-opened.t-is-active {
   // background-color: var(--color-white);
   color: var(--color-main);
@@ -1257,38 +1420,51 @@ button {
       fill: white;
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 侧边栏未选中样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__popup .t-menu__item {
   color: var(--color-bk1);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__popup.t-is-vertical .t-menu__item {
   height: 28px;
   margin: 0;
   padding-left: 6px;
   margin-bottom: 2px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__popup.t-is-vertical.t-is-opened {
   margin-left: 8px !important;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__item:hover:not(.t-is-active):not(.t-is-opened):not(.t-is-disabled) {
   background-color: transparent;
   .t-menu__content{
     color: var(--color-main);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item:first-child {
   margin-top: 4px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__item {
   padding-left: 22px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 表格操作栏最小宽
 // .t-table--column-fixed .t-table__cell--fixed-right {
@@ -1296,34 +1472,43 @@ button {
 // }
 
 // 多选项当前色和背景色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-checkbox__input {
   border: 1px solid var(--color-border); //多选框边框线
 
   &:hover {
     border-color: var(--color-main);
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-checkbox {
   .t-checkbox__input {
     &:hover {
       border-color: #0698FF;
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-checkbox.t-is-checked .t-checkbox__input {
   border-color: #0698FF;
   background-color: #0698FF;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 选中多选框颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-checkbox.t-is-indeterminate .t-checkbox__input {
   border-color: var(--color-main);
   background-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 提示语样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-tooltip--default .t-popup__content {
   width: 334px;
   font-size: 12px;
@@ -1332,17 +1517,23 @@ button {
   line-height: 17px;
   background: var(--color-white);
   box-shadow: 0 0 8px 1px rgba(34, 40, 51, 0.12);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-tooltip--default[data-popper-placement^='bottom'] .t-popup__arrow:before {
   box-shadow: -1px 0 20px 1px rgba(34, 40, 51, 0.12);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-tooltip--default[data-popper-placement^='top'] .t-popup__arrow:before {
   box-shadow: -1px 0 20px 1px rgba(34, 40, 51, 0.12);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 //tab切换样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-tabs {
   padding-bottom: 24px;
 
@@ -1379,11 +1570,14 @@ button {
   .t-tabs__nav-scroll {
     z-index: 9;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-tabs__nav-item:not(.t-is-disabled):not(.t-is-active):hover .t-tabs__nav-item-wrapper {
   background-color: rgba(255, 255, 255, 0);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 字数控制
 // 每10字
@@ -1528,32 +1722,38 @@ button {
   }
 }
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table .t-table__sort-column {
   // 取消背景色
   background-color: transparent;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
-// 弹窗
-.t-dialog__ctx .t-dialog__wrap {
-  overflow: initial;
-}
+// 弹窗 — TDesign 1.x 定位机制变化, 注释旧 0.x 覆盖
+// .t-dialog__ctx .t-dialog__wrap {
+//   overflow: initial;
+// }
 
 // 步进条颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps--horizontal.t-steps--default-anchor .t-steps-item--finish:not(:last-child) .t-steps-item__title:after {
   border-bottom-color: var(--color-main);
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .demo-select-base {
   min-width: 90px;
   width: 18.7%;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-input.t-is-readonly {
     // 取消右侧两角的圆角
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: none;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 .account {
@@ -1561,10 +1761,12 @@ button {
   height: 32px;
   width: 81.3%;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-input {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 // 整体列表搜索
@@ -1572,19 +1774,26 @@ button {
   padding: 0 12px var(--space-main);
   margin-bottom: 24px;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-form__item {
     width: 100%;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-form:not(.t-form-inline) .t-form__item:last-of-type {
     margin-top: var(--space-main);
     padding: 0 15px !important;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-form .searchBtn {
     margin-top: var(--space-main);
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-col {
     button {
       margin: 0 8px;
@@ -1592,7 +1801,8 @@ button {
         margin-left: 15px;
       }
     }
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
   .searchBtn {
 
@@ -1601,19 +1811,23 @@ button {
     }
   }
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-row {
     &>div.t-col {
       max-width: 33.3%;
       display: inline-block;
     }
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 .formBox,
 .searchBox {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   .t-select__wrap {
     height: 32px;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 // 新增按钮布局
@@ -1650,61 +1864,76 @@ button {
         min-width: 140px;
 
         p {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
           &:first-child {
             font-size: 34px;
             line-height: 48px;
             color: var(--color-black);
             font-weight: 600;
-          }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+          } /* DTODO ↑ */
         }
       }
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:nth-child(1) {
         .img {
           background: url(@/assets/icon-shangjia1.png) no-repeat;
           background-size: contain;
         }
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:nth-child(2) {
         .img {
           background: url(@/assets/icon-shangjia2.png) no-repeat;
           background-size: contain;
         }
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:nth-child(3) {
         .img {
           background: url(@/assets/icon-shangjia3.png) no-repeat;
           background-size: contain;
         }
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:nth-child(4) {
         .img {
           background: url(@/assets/icon-shangjia4.png) no-repeat;
           background-size: contain;
         }
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:nth-child(5) {
         .img {
           background: url(@/assets/icon-shangjia5.png) no-repeat;
           background-size: contain;
         }
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
       &:nth-child(6) {
         .img {
           background: url(@/assets/icon-shangjia6.png) no-repeat;
           background-size: contain;
         }
-      }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+      } /* DTODO ↑ */
     }
   }
 }
 
 // 树状图选中样式
 .t-tree--hoverable .t-tree__label:not(.t-is-active):not(.t-is-checked):hover,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-is-active .t-tree__label {
   background-color: transparent;
 
@@ -1713,7 +1942,8 @@ button {
       color: var(--color-main) !important;
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 去除时间选择器选择时的底色
 // .t-range-input-popup--visible .t-range-input .t-input.t-is-focused,
@@ -1722,9 +1952,11 @@ button {
 // }
 
 // 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-card--bordered {
   border: 0 none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .t-card,
 .secondary-notification {
@@ -1735,23 +1967,30 @@ button {
 .btn-hover-active {
   cursor: pointer;
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &:hover {
     background: #eaeaea;
     border-radius: 3px;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
   &:active {
     background: #eaeaea;
     border-radius: 3px;
-  }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+  } /* DTODO ↑ */
 }
 
 //列表空白内容高度自适应
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__empty {
   height: 100%;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 筛选弹框样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-popup[data-popper-placement^="bottom"] .t-popup__content--arrow {
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.10), 0 8px 10px 1px rgba(0, 0, 0, 0.06), 0 3px 14px 2px rgba(0, 0, 0, 0.05);
 
@@ -1794,21 +2033,27 @@ button {
       background-color: var(--color-error2);;
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-default-menu .t-menu__sub .t-menu__item {
   padding-left: 63px;
 
   div {
     display: none;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-input .t-input__suffix>.t-icon:hover {
   color: var(--td-text-color-placeholder);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 右侧固定的阴影
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__content--scrollable-to-right .t-table__cell--fixed-right-first::after {
   left: -10px;
   border: none;
@@ -1816,22 +2061,26 @@ button {
   height: 100%;
   transform: scaleX(-1);
   background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.00) 0%, rgba(99, 97, 96, 0.10) 100%);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 //重置左侧菜单收起后hover菜单右侧出现的子菜单popup样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__popup {
   width: auto !important;
 
   .t-menu__item {
     padding: 0 20px !important;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 媒体查询
 
 /* 当页面宽度是最小1580.最大1740的时候例表的搜索表单改变列表宽度，暂时一行最多4个 + 按钮 */
 @media screen and (min-width:1705px) and (max-width:2051px) {
   .formBox {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
     .t-row {
       &>div.t-col {
         max-width: calc(25% - 40.5px) !important;
@@ -1840,7 +2089,8 @@ button {
           max-width: 159px !important;
         }
       }
-    }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+    } /* DTODO ↑ */
   }
 }
 
@@ -1861,6 +2111,7 @@ button {
 /* 当页面宽度是最小2052.最大2362的时候例表的搜索表单改变列表宽度，暂时一行最多6个 */
 @media screen and (min-width:2052px) and (max-width:2673px) {
   .formBox {
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
     .t-row {
       &>div.t-col {
         max-width: calc(20% - 30.4px) !important;
@@ -1869,7 +2120,8 @@ button {
           max-width: 159px !important;
         }
       }
-    }
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+    } /* DTODO ↑ */
   }
 }
 
@@ -1887,23 +2139,29 @@ button {
 //   }
 // }
 // 修改hover状态下的颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-tree__icon:not(:empty):hover {
   background-color: transparent;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // radio框选中的颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-radio.t-is-checked .t-radio__input {
   border-color: #0398FF;
 
   &:after {
     background-color: #0398FF;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // radio框hover的颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-radio:hover .t-radio__input {
   border-color: #0398FF;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 表单内的带单位的输入框的文字位置样式
 .company {
@@ -1913,14 +2171,19 @@ button {
 }
 
 // 日期框hover的颜色
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-range-input:hover {
   border-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-range-input-popup--visible .t-range-input {
   border-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-breadcrumb--text-overflow .t-breadcrumb__inner {
   &:hover {
     color: var(--color-main);
@@ -1930,136 +2193,189 @@ button {
     color: var(--color-active);
     animation: none;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-textarea__inner:hover {
   border-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-textarea__inner:focus {
   border-color: var(--color-main);
   box-shadow: none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .t-message.t-is-success>.t-icon,
 .t-message.t-is-success>[data-t-icon]>.t-icon,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-message.t-is-success .t-loading {
   color: var(--color-success);
 
   path {
     fill-opacity: 1;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .t-message.t-is-warning>.t-icon,
 .t-message.t-is-warning>[data-t-icon]>.t-icon,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-message.t-is-warning .t-loading {
   color: var(--color-warning);
 
   path {
     fill-opacity: 1;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .t-message.t-is-error>.t-icon,
 .t-message.t-is-error>[data-t-icon]>.t-icon,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-message.t-is-error .t-loading {
   color: var(--color-error);
 
   path {
     fill-opacity: 1;
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 步骤条目前无点击功能，先不出小手
 .t-steps .t-steps-item__inner.t-steps-item--clickable,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-steps .t-steps-item {
   cursor: default;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 // 次级联选框的样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-cascader__item.t-is-expanded {
   color: var(--color-main);
   background-color: var(--color-bk12);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-cascader__item.t-is-expanded .t-icon-chevron-right {
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-select .t-fake-arrow--active {
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-input:focus {
   border-color: var(--color-main);
   box-shadow: none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-range-input-popup--visible .t-range-input {
   border-color: var(--color-main);
   box-shadow: none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 .t-range-input-popup--visible .t-range-input .t-icon-time,
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-range-input-popup--visible .t-range-input .t-icon-calendar {
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__popup-wrapper {
   padding-left: 0;
   overflow-y: auto;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-menu__content {
   color: var(--color-bk3);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__filter-icon-wrap{
   .t-is-focus{
     path{
       fill: var(--color-main);
     }
   }
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__sort-icon--active{
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-table__sort-icon .t-is-focus, .t-table__sort-icon.t-is-focus, .t-table__sort-icon:hover{
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-cascader__item:hover:not(.t-is-expanded):not(.t-is-disabled){
   background-color: var(--color-bk12);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-select__wrap{
   height: 32px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-upload__card-container:hover{
   border-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 // 去除底部数据数量
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-pagination__total{
   display: none;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-cascader__item.t-is-selected{
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-dialog__header .t-dialog__close:hover{
   background-color: #eaeaea;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 // 两个radio框的间距
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-radio-group .t-radio{
   margin-right: 16px;
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 .czri-side-nav-logo-wrapper{
   height: 130px;
 }
 // 下拉框展开
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-cascader .t-fake-arrow--active{
   color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */
 
 //switch样式
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖 ↓ */
 .t-switch.t-is-checked,.t-switch.t-is-checked:hover{
   background-color: var(--color-main);
-}
+/* DTODO: TDesign 1.x 迁移 — 旧覆盖, 待评估是否需要 */
+} /* DTODO ↑ */

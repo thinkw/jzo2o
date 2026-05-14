@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import MarkdownRender, { enableKatex, enableMermaid } from 'markstream-vue'
+import MarkdownRender, { enableKatex, enableMermaid, MarkdownCodeBlockNode, setCustomComponents } from 'markstream-vue'
 import 'markstream-vue/index.css'
 import 'katex/dist/katex.min.css'
 
@@ -21,6 +21,8 @@ let ready = false
 function initPlugins() {
   if (ready) return
   try {
+    // 注册 Shiki 代码高亮(替换默认的 Monaco 渲染器)
+    setCustomComponents({ code_block: MarkdownCodeBlockNode })
     enableMermaid()
     enableKatex()
     ready = true

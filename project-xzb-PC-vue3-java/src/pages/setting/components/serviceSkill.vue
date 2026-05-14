@@ -7,7 +7,8 @@
     :on-close="onClickCloseBtn"
   >
     <template #body>
-      <div class="leftBox">
+      <div class="bodyContainer">
+        <div class="leftBox">
         <img
           src="@/assets/icon_team_guanbi.png"
           alt=""
@@ -67,7 +68,10 @@
       </div>
       <div class="rightBox">
         <div class="title">已选服务（{{ activeItems.length }}）</div>
-        <NoData v-if="activeItems.length === 0" content="暂无已选服务技能"></NoData>
+        <NoData
+          v-if="activeItems.length === 0"
+          content="暂无已选服务技能"
+        ></NoData>
         <div class="cardBox" v-if="activeItems.length > 0">
           <div class="card" v-for="(item, index) in activeItems" :key="index">
             <span>{{ item.serveItemName }}</span>
@@ -79,13 +83,16 @@
           </div>
         </div>
       </div>
+      </div>
     </template>
     <template #footer>
-      <div class="bt bt-grey btn-submit" @click="onClickCloseBtn">
-        <span>取消</span>
-      </div>
-      <div type="submit" class="bt btn-submit" @click="handleSubmit">
-        <span>保存</span>
+      <div class="footerContainer">
+        <div class="bt bt-grey btn-submit" @click="onClickCloseBtn">
+          <span>取消</span>
+        </div>
+        <div type="submit" class="bt btn-submit" @click="handleSubmit">
+          <span>保存</span>
+        </div>
       </div>
     </template>
   </t-dialog>
@@ -490,15 +497,45 @@ watch(
   color: var(--color-bk4);
   right: 10px;
 }
-:deep(.t-dialog__footer) {
+.footerContainer {
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   padding: 22px 32px 24px;
+  width: 100%;
 }
-:deep(.t-dialog__body) {
-  border-bottom: 1px solid #e4e7ed;
-  padding: 0 37px 0 17.5px;
+:deep(.t-dialog__footer) {
+  display: block !important;
+  padding: 0;
+}
+//:deep(.t-dialog__body) {
+//  border-bottom: 1px solid #e4e7ed;
+//  padding: 0 37px 0 17.5px;
+//  display: flex;
+//}
+.bodyContainer {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  border-bottom: 1px solid #e4e7ed;
+  padding: 0;
+}
+
+.leftBox {
+  flex-shrink: 0;
+}
+
+.middleBox {
+  flex-shrink: 0;
+}
+
+.rightBox {
+  flex-shrink: 0;
+}
+
+:deep(.t-dialog__body) {
+  padding: 0 37px 0 17.5px !important;
 }
 :deep(.noData img) {
   width: 157.3px;
