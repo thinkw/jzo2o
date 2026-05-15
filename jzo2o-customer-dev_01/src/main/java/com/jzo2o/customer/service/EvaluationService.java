@@ -8,6 +8,7 @@ import com.jzo2o.customer.model.dto.response.EvaluationAndOrdersResDTO;
 import com.jzo2o.customer.model.dto.response.EvaluationResDTO;
 import com.jzo2o.customer.model.dto.response.BooleanResDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -98,4 +99,14 @@ public interface EvaluationService {
      * @param evaluationSubmitReqDTO 评价信息
      */
     void autoEvaluate(EvaluationSubmitReqDTO evaluationSubmitReqDTO);
+
+    /**
+     * 查询指定目标在指定时间之后的新增评价 (供 AI 增量总结使用)
+     *
+     * @param targetTypeId 评价目标类型 (6=服务项, 7=服务人员)
+     * @param targetId     目标ID
+     * @param afterTime    起始时间 (不含)
+     * @return 评价列表
+     */
+    List<Evaluation> queryByTargetIdAndTime(Integer targetTypeId, Long targetId, LocalDateTime afterTime);
 }

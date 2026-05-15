@@ -53,4 +53,44 @@
       white-space: nowrap;
     }
   }
+  // AI 总结弹窗
+  .summary-target {
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #666;
+    strong { color: #333; }
+  }
+  .summary-loading {
+    padding: 40px 0;
+    text-align: center;
+  }
+  .summary-content {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 6px;
+  }
+  .summary-error {
+    padding: 20px;
+    color: #e34d59;
+    text-align: center;
+  }
+  .summary-empty {
+    padding: 20px;
+    color: #999;
+    text-align: center;
+  }
+  .summary-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    .bt, .bt-grey {
+      height: 32px;
+      border-radius: 3px;
+    }
+    .wt-60 { width: 60px; }
+    .wt-100 { width: 100px; }
+  }
 }

@@ -539,6 +539,22 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     /**
+     * 查询指定目标在指定时间之后的新增评价 (供 AI 增量总结使用)
+     * targetId 为 null 时查询该类型下所有目标
+     */
+    @Override
+    public List<Evaluation> queryByTargetIdAndTime(Integer targetTypeId, Long targetId, LocalDateTime afterTime) {
+        return evaluationMapper.selectList(
+                Wrappers.<Evaluation>lambdaQuery()
+                        .eq(Evaluation::getTargetTypeId, targetTypeId)
+                        .eq(targetId != null, Evaluation::getTargetId, targetId)
+                        .eq(Evaluation::getStatus, 0)
+                        .gt(afterTime != null, Evaluation::getCreateTime, afterTime)
+                        .orderByAsc(Evaluation::getCreateTime)
+        );
+    }
+
+    /**
      * 自动评价（默认5分好评）
      */
     @Override

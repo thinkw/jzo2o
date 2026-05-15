@@ -1,5 +1,6 @@
 package com.jzo2o.customer.controller.operation;
 
+import com.jzo2o.api.AiApi;
 import com.jzo2o.customer.model.dto.request.EvaluationPageByTargetReqDTO;
 import com.jzo2o.customer.model.dto.response.EvaluationResDTO;
 import com.jzo2o.customer.service.EvaluationService;
@@ -24,6 +25,9 @@ public class EvaluationController {
     @Resource
     private EvaluationService evaluationService;
 
+    @Resource
+    private AiApi aiApi;
+
     @GetMapping("/pageByTarget")
     @ApiOperation("运营端分页查询评价列表")
     public Map<String, Object> pageByTarget(EvaluationPageByTargetReqDTO evaluationPageByTargetReqDTO) {
@@ -43,5 +47,16 @@ public class EvaluationController {
     })
     public void delete(@PathVariable("id") Long id) {
         evaluationService.delete(id);
+    }
+
+    @PostMapping("/summarize")
+    @ApiOperation("手动触发 AI 评价总结 (异步)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "targetTypeId", value = "评价目标类型 (7=服务人员)", required = true, dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "targetId", value = "目标ID", required = true, dataTypeClass = Long.class)
+    })
+    public Map<String, String> summarize(@RequestParam("targetTypeId") Integer targetTypeId,
+                                         @RequestParam("targetId") Long targetId) {
+        return aiApi.summarizeEvaluation(targetTypeId, targetId);
     }
 }

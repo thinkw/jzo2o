@@ -32,4 +32,18 @@ public interface EvaluationApi {
      */
     @PostMapping("/autoEvaluate")
     void autoEvaluate(@RequestBody EvaluationSubmitReqDTO evaluationSubmitReqDTO);
+
+    /**
+     * 查询指定目标在指定时间之后的新增评价 (供 AI 增量总结使用)
+     * targetId 为 null 时查询该类型下所有目标
+     *
+     * @param targetTypeId 评价目标类型
+     * @param targetId     目标ID (可选, 为 null 时查所有)
+     * @param afterTime    起始时间 (ISO格式字符串, 可选)
+     * @return 评价列表 JSON
+     */
+    @GetMapping("/queryByTargetIdAndTime")
+    String queryByTargetIdAndTime(@RequestParam("targetTypeId") Integer targetTypeId,
+                                  @RequestParam(value = "targetId", required = false) Long targetId,
+                                  @RequestParam(value = "afterTime", required = false) String afterTime);
 }

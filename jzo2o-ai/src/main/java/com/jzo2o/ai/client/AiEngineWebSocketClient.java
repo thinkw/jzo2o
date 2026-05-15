@@ -123,6 +123,101 @@ public class AiEngineWebSocketClient {
     }
 
     /**
+     * 为指定 session 建立 WebSocket 连接, 收集完整回复后通过 CompletableFuture 返回。
+     * 用于定时任务等无 HTTP 请求上下文的场景 (不需要 SseEmitter)。
+     *
+     * @param sessionId 会话ID
+     * @param messages  消息列表 (OpenAI 格式)
+     * @return 包含完整 AI 回复文本的 CompletableFuture
+     */
+    public CompletableFuture<String> connectAndCollect(String sessionId,
+                                                       List<Map<String, String>> messages) {
+        CompletableFuture<String> resultFuture = new CompletableFuture<>();
+        cancelExistingSession(sessionId);
+
+        String wsUri = aiEngineProperties.getWsUrl() + "/ws/chat/" + sessionId;
+        log.info("建立 WebSocket 连接 (collect模式), sessionId={}, uri={}", sessionId, wsUri);
+
+        String userMessageJson;
+        try {
+            userMessageJson = objectMapper.writeValueAsString(
+                    Map.of("type", "user_message", "messages", messages));
+        } catch (Exception e) {
+            log.error("序列化 user_message 失败, sessionId={}", sessionId, e);
+            resultFuture.completeExceptionally(e);
+            return resultFuture;
+        }
+
+        StringBuffer responseBuffer = new StringBuffer();
+
+        Disposable disposable = wsClient.execute(URI.create(wsUri), session -> {
+            activeWsSessions.put(sessionId, session);
+
+            Mono<Void> send = session.send(
+                    Mono.just(session.textMessage(userMessageJson)));
+
+            Mono<Void> receive = session.receive()
+                    .doOnNext(wsMessage -> {
+                        String payload = wsMessage.getPayloadAsText();
+                        try {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> frame = objectMapper.readValue(payload, Map.class);
+                            String type = (String) frame.get("type");
+
+                            switch (type) {
+                                case "token":
+                                    String content = (String) frame.get("content");
+                                    if (content != null) {
+                                        responseBuffer.append(content);
+                                    }
+                                    break;
+                                case "tool_call":
+                                    handleToolCall(frame, sessionId);
+                                    break;
+                                case "agent_finish":
+                                    resultFuture.complete(responseBuffer.toString());
+                                    cleanup(sessionId);
+                                    break;
+                                case "error":
+                                    String msg = (String) frame.get("message");
+                                    log.error("Python 引擎返回错误, sessionId={}: {}", sessionId, msg);
+                                    resultFuture.completeExceptionally(new RuntimeException(msg));
+                                    cleanup(sessionId);
+                                    break;
+                                default:
+                                    // tool_start/tool_end 等在 collect 模式下忽略
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            log.error("解析 WebSocket 消息失败, sessionId={}: {}", sessionId, e.getMessage());
+                        }
+                    })
+                    .then();
+
+            return send.then(receive);
+        }).subscribe(
+                null,
+                error -> {
+                    log.error("WebSocket 连接异常, sessionId={}: {}", sessionId, error.getMessage());
+                    if (!resultFuture.isDone()) {
+                        resultFuture.completeExceptionally(error);
+                    }
+                    cleanup(sessionId);
+                },
+                () -> {
+                    log.info("WebSocket 连接关闭 (collect模式), sessionId={}", sessionId);
+                    if (!resultFuture.isDone()) {
+                        resultFuture.complete(responseBuffer.toString());
+                    }
+                    cleanup(sessionId);
+                }
+        );
+
+        activeSubscriptions.put(sessionId, disposable);
+        return resultFuture;
+    }
+
+    /**
      * 取消指定 session 的 WebSocket 连接
      */
     public void cancelSession(String sessionId) {

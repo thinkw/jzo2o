@@ -38,4 +38,18 @@ public class InnerEvaluationController implements EvaluationApi {
     public void autoEvaluate(@RequestBody EvaluationSubmitReqDTO evaluationSubmitReqDTO) {
         evaluationService.autoEvaluate(evaluationSubmitReqDTO);
     }
+
+    @Override
+    @GetMapping("/queryByTargetIdAndTime")
+    @ApiOperation("查询指定目标指定时间之后的新增评价")
+    public String queryByTargetIdAndTime(@RequestParam("targetTypeId") Integer targetTypeId,
+                                         @RequestParam(value = "targetId", required = false) Long targetId,
+                                         @RequestParam(value = "afterTime", required = false) String afterTime) {
+        java.time.LocalDateTime after = afterTime != null && !afterTime.isEmpty()
+                ? java.time.LocalDateTime.parse(afterTime)
+                : null;
+        java.util.List<com.jzo2o.customer.model.domain.Evaluation> list =
+                evaluationService.queryByTargetIdAndTime(targetTypeId, targetId, after);
+        return cn.hutool.json.JSONUtil.toJsonStr(list);
+    }
 }

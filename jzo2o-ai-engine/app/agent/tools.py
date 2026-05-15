@@ -35,12 +35,24 @@ async def customer_order_query(order_id: str) -> str:
     raise NotImplementedError("Remote tool executed via Java WebSocket")
 
 
+@tool
+async def get_evaluation_summary(target_type_id: int, target_id: int) -> str:
+    """读取上次 AI 评价总结。返回旧总结内容和上次总结时间, 用于增量合并。"""
+    raise NotImplementedError("Remote tool executed via Java WebSocket")
+
+
+@tool
+async def query_evaluations(target_type_id: int, target_id: int, after_time: str = "") -> str:
+    """查询指定目标在指定时间之后的新增评价列表。after_time 为空时查询所有评价。"""
+    raise NotImplementedError("Remote tool executed via Java WebSocket")
+
+
 # =============================================================================
 # 工具注册表
 # =============================================================================
 
 LOCAL_TOOLS: list = [calculate, get_current_time]
-REMOTE_TOOLS: list = [customer_order_query]
+REMOTE_TOOLS: list = [customer_order_query, get_evaluation_summary, query_evaluations]
 ALL_TOOLS: list = LOCAL_TOOLS + REMOTE_TOOLS
 
 # 远程工具名集合, tool_executor 节点用于路由判断

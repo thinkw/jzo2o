@@ -1,6 +1,9 @@
 package com.jzo2o.ai.client;
 
 import cn.hutool.json.JSONUtil;
+import com.jzo2o.ai.mapper.EvaluationSummaryMapper;
+import com.jzo2o.ai.model.domain.EvaluationSummary;
+import com.jzo2o.api.customer.EvaluationApi;
 import com.jzo2o.api.orders.OrdersApi;
 import com.jzo2o.api.orders.dto.response.OrderResDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,12 @@ public class ToolExecutor {
     @Resource
     private OrdersApi ordersApi;
 
+    @Resource
+    private EvaluationApi evaluationApi;
+
+    @Resource
+    private EvaluationSummaryMapper evaluationSummaryMapper;
+
     /**
      * 执行指定工具, 返回 JSON 字符串结果给 Python Agent
      *
@@ -39,10 +48,53 @@ public class ToolExecutor {
                 OrderResDTO order = ordersApi.queryById(orderId);
                 return JSONUtil.toJsonStr(order);
             }
+            case "get_evaluation_summary": {
+                // 读取上次 AI 总结内容 (evaluation_summary 表)
+                Integer targetTypeId = toInt(args.get("target_type_id"));
+                Long targetId = toLong(args.get("target_id"));
+                EvaluationSummary summary = evaluationSummaryMapper.selectOne(
+                        new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<EvaluationSummary>()
+                                .eq(EvaluationSummary::getTargetTypeId, targetTypeId)
+                                .eq(EvaluationSummary::getTargetId, targetId)
+                );
+                if (summary == null) {
+                    return JSONUtil.toJsonStr(Map.of(
+                            "has_previous", false,
+                            "summary", "",
+                            "last_evaluation_time", ""));
+                }
+                return JSONUtil.toJsonStr(Map.of(
+                        "has_previous", true,
+                        "summary", summary.getSummaryContent() != null ? summary.getSummaryContent() : "",
+                        "last_evaluation_time", summary.getLastEvaluationTime() != null
+                                ? summary.getLastEvaluationTime().toString() : ""));
+            }
+            case "query_evaluations": {
+                // 查询指定目标的新增评价 (Feign → jzo2o-customer)
+                Integer targetTypeId = toInt(args.get("target_type_id"));
+                Long targetId = toLong(args.get("target_id"));
+                String afterTime = (String) args.get("after_time");  // ISO 时间字符串, 可能为空
+                return evaluationApi.queryByTargetIdAndTime(targetTypeId, targetId, afterTime);
+            }
             default: {
                 log.warn("未知远程工具: {}", toolName);
                 return JSONUtil.toJsonStr(Map.of("error", "未知工具: " + toolName));
             }
         }
+    }
+
+    private static Integer toInt(Object val) {
+        if (val instanceof Integer) return (Integer) val;
+        if (val instanceof String) return Integer.valueOf((String) val);
+        if (val instanceof Number) return ((Number) val).intValue();
+        return null;
+    }
+
+    private static Long toLong(Object val) {
+        if (val instanceof Long) return (Long) val;
+        if (val instanceof Integer) return ((Integer) val).longValue();
+        if (val instanceof String) return Long.valueOf((String) val);
+        if (val instanceof Number) return ((Number) val).longValue();
+        return null;
     }
 }

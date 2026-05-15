@@ -35,6 +35,9 @@
             <a class="btn-dl line btn-split-right" @click="handleClickDetail(row)">
               详情
             </a>
+            <a class="btn-dl line btn-split-right" @click="handleClickSummary(row)">
+              AI 总结
+            </a>
             <a class="font-bt line" @click="handleClickDelete(row)">删除</a>
           </template>
         </t-table>
@@ -54,18 +57,46 @@
       @handle-delete="handleDelete"
       @handle-close="dialogDeleteVisible = false"
     />
+    <!-- AI 总结弹窗 -->
+    <t-dialog
+      v-model:visible="summaryVisible"
+      header="AI 评价总结"
+      width="800px"
+      :footer="false"
+    >
+      <div class="summary-target">
+        评价对象：<strong>{{ summaryTargetName }}</strong>
+      </div>
+      <div v-if="summaryLoading" class="summary-loading">
+        <t-loading text="AI 正在生成评价总结..." />
+      </div>
+      <div v-else-if="summaryError" class="summary-error">
+        {{ summaryError }}
+      </div>
+      <div v-else-if="summaryContent" class="summary-content">
+        <ChatMarkdown :content="summaryContent" />
+      </div>
+      <div v-else class="summary-empty">暂无总结数据</div>
+      <div class="summary-footer">
+        <button class="bt-grey wt-60" @click="summaryVisible = false">关闭</button>
+        <button class="bt wt-100" :disabled="summaryLoading" @click="handleClickSummary(currentSummaryRow)">
+          {{ summaryLoading ? '生成中...' : '重新生成' }}
+        </button>
+      </div>
+    </t-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
-import { getEvaluationList, getEvaluationDetail, deleteEvaluation } from '@/api/service'
+import { getEvaluationList, getEvaluationDetail, deleteEvaluation, getEvaluationSummary } from '@/api/service'
 import { COLUMNS } from './constants'
 import SearchForm from './components/SearchForm.vue'
 import DetailDialog from './components/DetailDialog.vue'
 import Delete from '@/components/Delete/index.vue'
 import NoData from '@/components/noData/index.vue'
+import ChatMarkdown from '@/components/chat/ChatMarkdown.vue'
 
 const listData = ref([])
 const dataLoading = ref(false)
@@ -73,6 +104,14 @@ const detailVisible = ref(false)
 const detailData = ref(null)
 const dialogDeleteVisible = ref(false)
 const deleteId = ref('')
+
+// AI 总结相关
+const summaryVisible = ref(false)
+const summaryLoading = ref(false)
+const summaryContent = ref('')
+const summaryError = ref('')
+const summaryTargetName = ref('')
+const currentSummaryRow = ref(null)
 
 // 分页
 const pagination = ref({
@@ -183,6 +222,31 @@ const handleClickDetail = async (row) => {
 const handleClickDelete = (row) => {
   deleteId.value = row.id
   dialogDeleteVisible.value = true
+}
+
+// AI 总结 — GET 端点已自带"有则返回/无则生成"逻辑
+const handleClickSummary = async (row) => {
+  currentSummaryRow.value = row
+  summaryTargetName.value = row.targetName || ''
+  summaryVisible.value = true
+  summaryError.value = ''
+  summaryContent.value = ''
+  summaryLoading.value = true
+
+  try {
+    const res = await getEvaluationSummary(7, row.targetId)
+    // 后端返回的 data 字段包含 {summary: "..."}
+    if (res && res.data && res.data.summary) {
+      summaryContent.value = res.data.summary
+    } else {
+      summaryError.value = (res && res.msg) || '无返回数据'
+    }
+  } catch (err) {
+    const msg = err?.response?.data?.msg || err?.message || String(err)
+    summaryError.value = msg
+  } finally {
+    summaryLoading.value = false
+  }
 }
 
 // 确认删除

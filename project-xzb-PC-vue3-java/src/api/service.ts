@@ -166,3 +166,18 @@ export function deleteEvaluation(id) {
     url: '/customer/agency/evaluation/' + id
   })
 }
+// 查询 AI 评价总结 (超时 180s, AI 生成需要较长时间)
+export function getEvaluationSummary(targetTypeId, targetId) {
+  return request.get({
+    url: '/customer/agency/evaluation/summarize',
+    params: { targetTypeId, targetId },
+    timeout: 180 * 1000
+  })
+}
+// 触发 AI 评价总结
+export function triggerEvaluationSummary(targetTypeId, targetId) {
+  return request.get({
+    url: '/customer/agency/evaluation/summarize',
+    params: { targetTypeId, targetId }
+  })
+}
