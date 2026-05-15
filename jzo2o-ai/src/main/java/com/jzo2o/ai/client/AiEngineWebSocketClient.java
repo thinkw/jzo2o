@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -34,6 +35,9 @@ public class AiEngineWebSocketClient {
 
     @Resource
     private ObjectMapper objectMapper;
+
+    @Resource
+    private ToolExecutor toolExecutor;
 
     /** sessionId → WebSocket 订阅, 用于取消旧连接 */
     private final ConcurrentHashMap<String, Disposable> activeSubscriptions = new ConcurrentHashMap<>();
@@ -166,6 +170,18 @@ public class AiEngineWebSocketClient {
                     emitter.complete();
                     cleanup(sessionId);
                     break;
+                case "tool_call":
+                    // Python Agent 请求执行远程工具 → 调用业务服务 → WS 回传 tool_result
+                    handleToolCall(frame, sessionId);
+                    break;
+                case "tool_start":
+                    // 透传工具开始事件给前端 (展示进度)
+                    emitter.send(SseEmitter.event().name("tool_start").data(payload));
+                    break;
+                case "tool_end":
+                    // 透传工具完成事件给前端
+                    emitter.send(SseEmitter.event().name("tool_end").data(payload));
+                    break;
                 case "error":
                     // Python 引擎报错
                     String message = (String) frame.get("message");
@@ -182,6 +198,50 @@ public class AiEngineWebSocketClient {
             cleanup(sessionId);
         } catch (Exception e) {
             log.error("解析 WebSocket 消息失败, sessionId={}: {}", sessionId, e.getMessage());
+        }
+    }
+
+    /**
+     * 处理 tool_call 帧 — 异步执行远程工具, 结果通过 WebSocket 回传给 Python
+     */
+    private void handleToolCall(Map<String, Object> frame, String sessionId) {
+        String toolName = (String) frame.get("tool_name");
+        String toolCallId = (String) frame.get("tool_call_id");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> args = (Map<String, Object>) frame.getOrDefault("args", Map.of());
+
+        CompletableFuture.supplyAsync(() -> toolExecutor.execute(toolName, toolCallId, args))
+                .thenAccept(result -> sendToolResult(sessionId, toolCallId, result))
+                .exceptionally(e -> {
+                    log.error("远程工具执行失败, sessionId={}, toolName={}: {}",
+                            sessionId, toolName, e.getMessage());
+                    // 失败时也回传 tool_result, 避免 Python 侧干等超时
+                    sendToolResult(sessionId, toolCallId,
+                            "{\"error\": \"" + e.getMessage().replace("\"", "'") + "\"}");
+                    return null;
+                });
+    }
+
+    /** 通过 WebSocket session 向 Python 发送 tool_result 帧 */
+    private void sendToolResult(String sessionId, String toolCallId, String content) {
+        WebSocketSession wsSession = activeWsSessions.get(sessionId);
+        if (wsSession != null && wsSession.isOpen()) {
+            try {
+                String resultJson = objectMapper.writeValueAsString(
+                        Map.of("type", "tool_result",
+                                "tool_call_id", toolCallId,
+                                "content", content));
+                wsSession.send(Mono.just(wsSession.textMessage(resultJson)))
+                        .subscribe(
+                                null,
+                                e -> log.error("发送 tool_result 失败, sessionId={}: {}",
+                                        sessionId, e.getMessage()));
+            } catch (Exception e) {
+                log.error("序列化 tool_result 失败, sessionId={}: {}",
+                        sessionId, e.getMessage());
+            }
+        } else {
+            log.warn("WebSocket 会话已关闭, 无法发送 tool_result, sessionId={}", sessionId);
         }
     }
 

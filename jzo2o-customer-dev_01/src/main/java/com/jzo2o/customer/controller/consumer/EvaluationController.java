@@ -2,10 +2,7 @@ package com.jzo2o.customer.controller.consumer;
 
 import com.jzo2o.api.customer.dto.request.EvaluationSubmitReqDTO;
 import com.jzo2o.common.utils.UserContext;
-import com.jzo2o.customer.model.dto.request.AuditReqDTO;
 import com.jzo2o.customer.model.dto.request.EvaluationPageByTargetReqDTO;
-import com.jzo2o.customer.model.dto.request.LikeOrCancelReqDTO;
-import com.jzo2o.customer.model.dto.response.AllEvaluationSystemInfoResDTO;
 import com.jzo2o.customer.model.dto.response.BooleanResDTO;
 import com.jzo2o.customer.model.dto.response.EvaluationAndOrdersResDTO;
 import com.jzo2o.customer.model.dto.response.EvaluationResDTO;
@@ -18,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
- * 评价相关接口
+ * 用户端 - 评价相关接口
  *
  * @author itcast
- * @create 2023/9/11 16:14
  **/
 @RestController("consumerEvaluationController")
 @RequestMapping("/consumer/evaluation")
@@ -39,31 +36,29 @@ public class EvaluationController {
         return evaluationService.submit(evaluationSubmitReqDTO);
     }
 
-    @GetMapping("/pageByTarget")
-    @ApiOperation("根据对象属性分页查询评价列表")
-    public List<EvaluationResDTO> pageByTargetId(EvaluationPageByTargetReqDTO evaluationPageByTargetReqDTO) {
-        return evaluationService.pageByTarget(evaluationPageByTargetReqDTO);
+    @PutMapping("/{id}")
+    @ApiOperation("修改评价")
+    public void update(@PathVariable("id") Long id,
+                       @RequestBody EvaluationSubmitReqDTO evaluationSubmitReqDTO) {
+        evaluationService.update(id, evaluationSubmitReqDTO);
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation("查询评价详情")
+    public EvaluationResDTO getById(@PathVariable("id") Long id) {
+        return evaluationService.getById(id);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation("删除评价")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "评价id", required = true, dataTypeClass = String.class)
-    })
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") Long id) {
         evaluationService.delete(id);
     }
 
-    @PostMapping("/likeOrCancel")
-    @ApiOperation("点赞或取消点赞接口")
-    public void likeOrCancel(@RequestBody LikeOrCancelReqDTO likeOrCancelReqDTO) {
-        evaluationService.likeOrCancel(likeOrCancelReqDTO);
-    }
-
-    @PostMapping("/userReport")
-    @ApiOperation("用户举报")
-    public void userReport(@RequestBody AuditReqDTO auditReqDTO) {
-        evaluationService.userReport(auditReqDTO);
+    @GetMapping("/pageByTarget")
+    @ApiOperation("根据对象属性分页查询评价列表")
+    public Map<String, Object> pageByTarget(EvaluationPageByTargetReqDTO evaluationPageByTargetReqDTO) {
+        return evaluationService.pageByTarget(evaluationPageByTargetReqDTO);
     }
 
     @GetMapping("/pageByCurrentUser")
@@ -72,14 +67,9 @@ public class EvaluationController {
             @ApiImplicitParam(name = "pageNo", value = "页码，默认为1", defaultValue = "1", dataTypeClass = Integer.class),
             @ApiImplicitParam(name = "pageSize", value = "页面大小，默认为10", defaultValue = "10", dataTypeClass = Integer.class)
     })
-    public List<EvaluationAndOrdersResDTO> pageByCurrentUser(@RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
-                                                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+    public List<EvaluationAndOrdersResDTO> pageByCurrentUser(
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         return evaluationService.pageByCurrentUser(pageNo, pageSize);
-    }
-
-    @GetMapping("/findAllSystemInfo")
-    @ApiOperation("查询评价配置信息")
-    public AllEvaluationSystemInfoResDTO findAllSystemInfo() {
-        return evaluationService.findAllSystemInfo(UserContext.currentUser());
     }
 }

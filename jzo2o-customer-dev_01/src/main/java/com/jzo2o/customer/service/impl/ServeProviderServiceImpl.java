@@ -21,12 +21,12 @@ import com.jzo2o.common.utils.CollUtils;
 import com.jzo2o.common.utils.IdUtils;
 import com.jzo2o.common.utils.ObjectUtils;
 import com.jzo2o.common.utils.*;
+import com.jzo2o.customer.enums.CertificationStatusEnum;
 import com.jzo2o.customer.mapper.ServeProviderMapper;
 import com.jzo2o.customer.model.domain.*;
 import com.jzo2o.customer.model.dto.ServeSkillSimpleDTO;
 import com.jzo2o.customer.model.dto.request.InstitutionRegisterReqDTO;
 import com.jzo2o.customer.model.dto.request.InstitutionResetPasswordReqDTO;
-import com.jzo2o.customer.model.dto.request.ServePickUpReqDTO;
 import com.jzo2o.customer.model.dto.request.ServeProviderPageQueryReqDTO;
 import com.jzo2o.customer.model.dto.response.CertificationStatusDTO;
 import com.jzo2o.customer.model.dto.response.ServeProviderBasicInformationResDTO;
@@ -37,6 +37,7 @@ import com.jzo2o.common.utils.UserContext;
 import com.jzo2o.mysql.utils.PageHelperUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -193,51 +194,51 @@ public class ServeProviderServiceImpl extends ServiceImpl<ServeProviderMapper, S
 
 
 
-//    @Override
-//    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-//    public void settingStatus(Long currentUserId) {
-//        ServeProvider serveProvider = baseMapper.selectById(currentUserId);
-//        // 已完成设置
-//        if (serveProvider.getSettingsStatus() == 1) {
-//            return;
-//        }
-//
-//        //获取认证状态
-//        CertificationStatusDTO certificationStatusDTO = getCertificationStatus(serveProvider.getType(), currentUserId);
-//        //获取认证状态
-//        Integer certificationStatus = ObjectUtils.get(certificationStatusDTO,CertificationStatusDTO::getCertificationStatus);
-//        // 校验是否认证通过，不通过return
-//        if (ObjectUtils.notEqual(CertificationStatusEnum.SUCCESS.getStatus(), certificationStatus)) {
-//            return;
-//        }
-//
-//        ServeProviderSettings serveProviderSettings = serveProviderSettingsService.findById(currentUserId);
-//        // 服务范围未设置
-//        if (ObjectUtils.isEmpty(serveProviderSettings.getLon())) {
-//            return;
-//        }
-//        // 未设置过接单状态
-//        if (EnableStatusEnum.UNKNOWAL.equals(serveProviderSettings.getCanPickUp())) {
-//            return;
-//        }
-//        // 未设置过服务技巧
-//        if (serveProviderSettings.getHaveSkill() == 0) {
-//            return;
-//        }
-//
-//        ServeProvider updateServeProvider = new ServeProvider();
-//        updateServeProvider.setSettingsStatus(1);
-//        updateServeProvider.setId(currentUserId);
-//        baseMapper.updateById(updateServeProvider);
-//
-//        ServeProviderSync serveProviderSync =
-//                ServeProviderSync.builder()
-//                        .id(currentUserId)
-//                        .settingStatus(1)
-//                        .build();
-//        serveProviderSyncService.updateById(serveProviderSync);
-//
-//    }
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void settingStatus(Long currentUserId) {
+        ServeProvider serveProvider = baseMapper.selectById(currentUserId);
+        // 已完成设置
+        if (serveProvider.getSettingsStatus() == 1) {
+            return;
+        }
+
+        //获取认证状态
+        CertificationStatusDTO certificationStatusDTO = getCertificationStatus(serveProvider.getType(), currentUserId);
+        //获取认证状态
+        Integer certificationStatus = ObjectUtils.get(certificationStatusDTO,CertificationStatusDTO::getCertificationStatus);
+        // 校验是否认证通过，不通过return
+        if (ObjectUtils.notEqual(CertificationStatusEnum.SUCCESS.getStatus(), certificationStatus)) {
+            return;
+        }
+
+        ServeProviderSettings serveProviderSettings = serveProviderSettingsService.findById(currentUserId);
+        // 服务范围未设置
+        if (ObjectUtils.isEmpty(serveProviderSettings.getLon())) {
+            return;
+        }
+        // 未设置过接单状态
+        if (EnableStatusEnum.UNKNOWAL.equals(serveProviderSettings.getCanPickUp())) {
+            return;
+        }
+        // 未设置过服务技巧
+        if (serveProviderSettings.getHaveSkill() == 0) {
+            return;
+        }
+
+        ServeProvider updateServeProvider = new ServeProvider();
+        updateServeProvider.setSettingsStatus(1);
+        updateServeProvider.setId(currentUserId);
+        baseMapper.updateById(updateServeProvider);
+
+        ServeProviderSync serveProviderSync =
+                ServeProviderSync.builder()
+                        .id(currentUserId)
+                        .settingStatus(1)
+                        .build();
+        serveProviderSyncService.updateById(serveProviderSync);
+
+    }
 
     @Override
     public ServeProviderResDTO findServeProviderInfo(Long id) {

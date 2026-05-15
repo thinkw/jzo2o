@@ -1,18 +1,22 @@
-<!-- AI聊天弹窗 -->
+<!-- AI聊天弹窗(悬浮窗模式) -->
 <template>
   <transition name="chat-slide">
     <div v-if="visible" class="chat-window">
       <div class="chat-header">
         <span>云岚到家 AI 助手</span>
-        <button class="chat-close-btn" @click="close">✕</button>
+        <div class="chat-header-actions">
+          <!-- 展开到侧边栏 -->
+          <button class="chat-expand-btn" title="展开到大窗口" @click="expand">⛶</button>
+          <button class="chat-close-btn" @click="close">✕</button>
+        </div>
       </div>
       <ChatMessageList
-        :messages="messages"
-        :streamingContent="streamingContent"
-        :loading="loading"
+        :messages="chatStore.messages"
+        :streamingContent="chatStore.streamingContent"
+        :loading="chatStore.loading"
       />
       <ChatInput
-        :loading="loading"
+        :loading="chatStore.loading"
         @send="handleSend"
       />
     </div>
@@ -20,61 +24,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { sendChatMessage } from '@/api/chat'
+import { useChatStore } from '@/store/modules/chat'
 import ChatMessageList from './ChatMessageList.vue'
 import ChatInput from './ChatInput.vue'
-
-interface ChatMsg {
-  role: 'user' | 'assistant'
-  content: string
-}
 
 defineProps<{ visible: boolean }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const messages = ref<ChatMsg[]>([])
-const streamingContent = ref('')
-const loading = ref(false)
-const sessionId = ref(generateSessionId())
+const router = useRouter()
+const chatStore = useChatStore()
 
-function generateSessionId(): string {
-  // 生成简易 UUID (不依赖外部库)
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    const v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
+async function handleSend(content: string) {
+  chatStore.addUserMessage(content)
+  chatStore.startRequest()
+
+  const recentMessages = chatStore.messages.slice(-20)
+  await sendChatMessage(recentMessages, chatStore.sessionId, {
+    onChunk(chunk: string) {
+      chatStore.appendStreamChunk(chunk)
+    },
+    onDone() {
+      chatStore.finishStreaming()
+    },
+    onError(error: string) {
+      chatStore.handleError(error)
+    },
   })
 }
 
-async function handleSend(content: string) {
-  // 添加用户消息
-  messages.value.push({ role: 'user', content })
-
-  // 准备发送给AI的消息列表 (最近20条, 防止token过多)
-  const recentMessages = messages.value.slice(-20)
-
-  loading.value = true
-  streamingContent.value = ''
-
-  await sendChatMessage(recentMessages, sessionId.value, {
-    onChunk(chunk: string) {
-      streamingContent.value += chunk
-    },
-    onDone() {
-      // 将累积的流式内容转为正式消息
-      if (streamingContent.value) {
-        messages.value.push({ role: 'assistant', content: streamingContent.value })
-      }
-      streamingContent.value = ''
-      loading.value = false
-    },
-    onError(error: string) {
-      messages.value.push({ role: 'assistant', content: `[错误] ${error}` })
-      streamingContent.value = ''
-      loading.value = false
-    },
-  })
+function expand() {
+  chatStore.enterSidebar()
+  emit('close')
+  router.push('/ai-chat')
 }
 
 function close() {
@@ -107,6 +90,22 @@ function close() {
   font-size: 15px;
   font-weight: 600;
 }
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.chat-expand-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  opacity: 0.8;
+  line-height: 1;
+  &:hover { opacity: 1; }
+}
 .chat-close-btn {
   background: none;
   border: none;
@@ -118,7 +117,6 @@ function close() {
   &:hover { opacity: 1; }
 }
 
-// 入场/出场动画
 .chat-slide-enter-active,
 .chat-slide-leave-active {
   transition: all 0.25s ease;

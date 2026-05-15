@@ -29,11 +29,10 @@ async def get_current_time() -> str:
 # =============================================================================
 
 
-# 后续扩展: 在此添加远程工具存根
-# @tool
-# async def customer_order_query(order_id: str) -> str:
-#     """查询客户订单详情"""
-#     raise NotImplementedError("Remote tool executed via Java WebSocket")
+@tool
+async def customer_order_query(order_id: str) -> str:
+    """查询客户订单详情。根据订单ID查询完整订单信息，包括订单状态、金额、服务类型、服务人员、地址等。"""
+    raise NotImplementedError("Remote tool executed via Java WebSocket")
 
 
 # =============================================================================
@@ -41,7 +40,7 @@ async def get_current_time() -> str:
 # =============================================================================
 
 LOCAL_TOOLS: list = [calculate, get_current_time]
-REMOTE_TOOLS: list = []  # 远程工具后续逐步添加
+REMOTE_TOOLS: list = [customer_order_query]
 ALL_TOOLS: list = LOCAL_TOOLS + REMOTE_TOOLS
 
 # 远程工具名集合, tool_executor 节点用于路由判断

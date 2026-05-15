@@ -13,6 +13,8 @@ import com.jzo2o.customer.model.dto.response.CertificationStatusDTO;
 import com.jzo2o.customer.model.dto.response.ServeProviderBasicInformationResDTO;
 import com.jzo2o.customer.model.dto.response.ServeProviderInfoResDTO;
 import com.jzo2o.customer.model.dto.response.ServeProviderListResDTO;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -94,6 +96,9 @@ public interface IServeProviderService extends IService<ServeProvider> {
 //     * @param currentUserId
 //     */
 //    void settingStatus(Long currentUserId);
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    void settingStatus(Long currentUserId);
 
     ServeProviderResDTO findServeProviderInfo(Long id);
 

@@ -125,7 +125,7 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
      */
     @Override
     public OrderResDTO getDetail(Long id) {
-//        Orders orders = queryById(id);
+        Orders orders = queryById(id);
         //订单快照中查询订单
         String currentSnapshot = orderStateMachine.getCurrentSnapshotCache(String.valueOf(id));
         OrderSnapshotDTO orderSnapshotDTO = JSONUtil.toBean(currentSnapshot, OrderSnapshotDTO.class);

@@ -1,8 +1,6 @@
 package com.jzo2o.customer.controller.worker;
 
-import com.jzo2o.customer.model.dto.request.EvaluationPageByTargetReqDTO;
 import com.jzo2o.customer.model.dto.response.EvaluationAndOrdersResDTO;
-import com.jzo2o.customer.model.dto.response.EvaluationResDTO;
 import com.jzo2o.customer.service.EvaluationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,10 +15,9 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 评价相关接口
+ * 服务端 - 评价相关接口
  *
  * @author itcast
- * @create 2023/9/11 16:14
  **/
 @RestController("workerEvaluationController")
 @RequestMapping("/worker/evaluation")
@@ -36,9 +33,10 @@ public class EvaluationController {
             @ApiImplicitParam(name = "pageNo", value = "页码，默认为1", defaultValue = "1", dataTypeClass = Integer.class),
             @ApiImplicitParam(name = "pageSize", value = "页面大小，默认为10", defaultValue = "10", dataTypeClass = Integer.class)
     })
-    public List<EvaluationAndOrdersResDTO> pageByCurrentUserAndScoreLevel(@RequestParam(value = "scoreLevel", required = false) Integer scoreLevel,
-                                                                          @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
-                                                                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        return evaluationService.pageByCurrentUserAndScoreLevel(scoreLevel,pageNo, pageSize);
+    public List<EvaluationAndOrdersResDTO> pageByCurrentUserAndScoreLevel(
+            @RequestParam(value = "scoreLevel", required = false) Integer scoreLevel,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        return evaluationService.pageByCurrentUserAndScoreLevel(scoreLevel, pageNo, pageSize);
     }
 }

@@ -14,8 +14,8 @@
       </template>
     </div>
   </div>
-  <!-- AI助手悬浮入口 -->
-  <ChatFloatingButton :visible="showChat" @toggle="showChat = !showChat" />
+  <!-- AI助手悬浮入口(侧边栏模式时隐藏) -->
+  <ChatFloatingButton v-if="chatStore.mode !== 'sidebar'" :visible="showChat" @toggle="showChat = !showChat" />
   <ChatWindow :visible="showChat" @close="showChat = false" />
 </template>
 
@@ -24,6 +24,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useSettingStore, useTabsRouterStore } from '@/store'
+import { useChatStore } from '@/store/modules/chat'
 
 import LayoutContentSide from './components/LayoutContentSide.vue'
 import LayoutSideNav from './components/LayoutSideNav.vue'
@@ -36,6 +37,7 @@ import EaseRequest from './components/EaseRequest.vue'
 const route = useRoute()
 const settingStore = useSettingStore()
 const tabsRouterStore = useTabsRouterStore()
+const chatStore = useChatStore()
 const setting = storeToRefs(settingStore)
 const showChat = ref(false)
 // mainLayoutCls是一个计算属性，用于控制主布局的样式

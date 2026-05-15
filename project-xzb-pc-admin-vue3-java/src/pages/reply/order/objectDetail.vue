@@ -2,9 +2,10 @@
   <div class="detail-comment bg-wt">
     <div class="title">
       <div class="name">{{ title }}</div>
-      <div class="font-bt" @click="handleComments(evaluationStatus)">
+      <!-- 评价开关功能暂时禁用 -->
+      <!-- <div class="font-bt" @click="handleComments(evaluationStatus)">
         {{ evaluationStatus ? '关闭评价' : '开启评价' }}
-      </div>
+      </div> -->
     </div>
     <div class="title name allReply">全部评论（{{ evaluateCount }}）</div>
     <div class="comment">
@@ -36,32 +37,36 @@
               <span>{{ item.createTime }}</span>
               <!-- 操作 -->
               <div class="operation">
-                <div class="like">
+                <!-- 点赞数暂时禁用 -->
+                <!-- <div class="like">
                   <div>点赞数：</div>
                   <span>{{
                     item.statistics?.likeNumber
                       ? item.statistics?.likeNumber
                       : 0
                   }}</span>
-                </div>
-                <div
+                </div> -->
+                <!-- 回复按钮暂时禁用 -->
+                <!-- <div
                   class="reply"
                   @click="handleContract(item.id)"
                 >
                   <div></div>
                   <span>{{ item.statistics?.replyNumber }}</span>
-                </div>
-                <div class="setTop" @click="handleSetTop(item.id, item.isTop)">
+                </div> -->
+                <!-- 置顶按钮暂时禁用 -->
+                <!-- <div class="setTop" @click="handleSetTop(item.id, item.isTop)">
                   <div></div>
                   <span>{{ item.isTop == 0 ? '置顶' : '取消置顶' }}</span>
-                </div>
+                </div> -->
                 <div class="delete" @click="handleDeleteBtn(item.id, 1)">
                   <div></div>
                   <span>删除</span>
                 </div>
               </div>
             </div>
-            <div :id="item.id" class="Contract">
+            <!-- 一级评论回复表单暂时禁用 -->
+            <!-- <div :id="item.id" class="Contract">
               <t-form
                 :data="replayValue"
                 :rules="evaluationRules"
@@ -89,9 +94,9 @@
                   </button>
                 </t-form-item>
               </t-form>
-            </div>
-            <!-- 默认显示的回复列表 -->
-            <div
+            </div> -->
+            <!-- 默认显示的回复列表暂时禁用 -->
+            <!-- <div
               class="card2"
             >
               <div
@@ -124,11 +129,7 @@
                   <div class="foot2">
                     <span>{{ items.createTime }}</span>
                     <div class="operation">
-                      <!-- <div class="like" @click="handleContract(items.id)">
-                        <div></div>
-                        <span>回复</span>
-                      </div> -->
-                      <div class="reply" @click="handleContract(items.id)">
+                      <div class="like" @click="handleContract(items.id)">
                         <div></div>
                         <span>回复</span>
                       </div>
@@ -169,9 +170,9 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <!-- 展开的回复列表 -->
-            <div
+            </div> -->
+            <!-- 展开的回复列表暂时禁用 -->
+            <!-- <div
               class="card2"
             >
               <div
@@ -201,7 +202,6 @@
                   </div>
                   <div class="foot2">
                     <span>{{ content.createTime }}</span>
-                    <!-- 操作 -->
                     <div class="operation">
                       <div class="like">
                         <div>点赞数：</div>
@@ -288,7 +288,7 @@
                   class="retract"
                 />
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -304,14 +304,14 @@
     @handle-delete="handleDelete"
     @handle-close="handleClose"
   ></Delete>
-  <!-- 确认弹层 -->
-  <Confirm
+  <!-- 确认弹层暂时禁用 -->
+  <!-- <Confirm
     :title="confirmTitle"
     :dialog-confirm-visible="dialogConfirmVisible"
     :confirm-text="confirmText"
     @handle-confirm="handleConfirm"
     @handle-close="handleClose"
-  ></Confirm>
+  ></Confirm> -->
 </template>
 
 <script setup lang="ts">
@@ -319,8 +319,10 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { MessagePlugin, ValidateResultContext } from 'tdesign-vue-next'
 import Delete from '@/components/Delete/index.vue' // 删除弹层
-import Confirm from '@/components/Confirm/index.vue' // 确认弹层
-// import { getEvaluationsList } from '@/api/list'
+// 确认弹层暂时禁用
+// import Confirm from '@/components/Confirm/index.vue' // 确认弹层
+import { getEvaluationsList } from '@/api/list'
+// 暂不支持的API导入已禁用
 // import {
 //   replayComments,
 //   deleteComments,
@@ -398,7 +400,8 @@ const topVal = ref()
 onMounted(() => {
   getData(requestData.value)
   title.value = localStorage.getItem('objectDetailTitle')
-  getEvaluationStatus()
+  // 评价状态查询暂时禁用
+  // getEvaluationStatus()
 })
 const replayValue = ref({
   content: ''
@@ -406,23 +409,23 @@ const replayValue = ref({
 
 // 请求获取数据
 const getData = async (val) => {
-  // await getEvaluationsList(val)
-  //   .then((res) => {
-  //     if (res.code === 200) {
-  //       data.value = res.data
-  //       evaluateCount.value = res.data.total
-  //       loadData.value.push(...res.data.list)
-  //     } else {
-  //       console.log(res.msg)
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     if (err === 'refreshToken') {
-  //       getData(val)
-  //     } else {
-  //       console.log(err)
-  //     }
-  //   })
+  await getEvaluationsList(val)
+    .then((res) => {
+      if (res.code === 200) {
+        data.value = res.data
+        evaluateCount.value = res.data.total
+        loadData.value.push(...res.data.list)
+      } else {
+        console.log(res.msg)
+      }
+    })
+    .catch((err) => {
+      if (err === 'refreshToken') {
+        getData(val)
+      } else {
+        console.log(err)
+      }
+    })
 }
 // 控制输入框的显示和隐藏
 const handleContract = (val) => {
@@ -483,81 +486,81 @@ const transferData = (item, eId?, oID?) => {
     replyOwnerId.value = oID
   }
 }
-// 提交（一级评论）
-const onSubmit = (result: ValidateResultContext<FormData>) => {
-  if (result.validateResult === true) {
-    handleReply(list.value)
-  }
-}
-// 提交（二级评论）
-const onSubmits = (result: ValidateResultContext<FormData>) => {
-  if (result.validateResult === true) {
-    handleReplys(list.value)
-  }
-}
-// 回复评论(一级评论)
-const handleReply = async (val) => {
-  // 校验输入框的内容
-  replyData.value.ownerId = val.ownerId
-  replyData.value.evaluationId = val.id
-  replyData.value.parentId = 0
-  replyData.value.content = replayValue.value.content
-  // await replayComments(targetTypeId.value.targetTypeId, replyData.value)
-  //   .then((res) => {
-  //     if (res.code === 200) {
-  //       MessagePlugin.success('回复成功')
-  //       replayValue.value.content = ''
-  //       getData(requestData.value)
-  //       handleCloseText()
-  //       handleLoadMoreReply(requestListData.value)
-  //     } else {
-  //       MessagePlugin.error(`${res.msg}`)
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     if (err === 'refreshToken') {
-  //       handleReply(val)
-  //     } else {
-  //       console.log(err)
-  //     }
-  //   })
-}
-// 回复评论（二级评论）
-const handleReplys = async (val) => {
-  // 校验输入框的内容
-  if (val.ownerId) {
-    replyData.value.ownerId = val.ownerId
-  } else {
-    replyData.value.ownerId = replyOwnerId.value
-  }
-  if (val.evaluationId) {
-    replyData.value.evaluationId = val.evaluationId
-  } else {
-    replyData.value.evaluationId = replyEvaluationId.value
-  }
-  replyData.value.parentId = val.id
-  replyData.value.content = replayValue.value.content
-  // await replayComments(targetTypeId.value.targetTypeId, replyData.value)
-  //   .then((res) => {
-  //     if (res.code === 200) {
-  //       MessagePlugin.success('回复成功')
-  //       // 情空输入框的内容
-  //       replayValue.value.content = ''
-  //       handleCloseText()
-  //       getData(requestData.value)
-  //       handleLoadMoreReply(requestListData.value)
-  //     } else {
-  //       MessagePlugin.error(`${res.msg}`)
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     if (err === 'refreshToken') {
-  //       handleReplys(val)
-  //     } else {
-  //       console.log(err)
-  //     }
-  //   })
-}
+// 提交（一级评论）暂时禁用
+// const onSubmit = (result: ValidateResultContext<FormData>) => {
+//   if (result.validateResult === true) {
+//     handleReply(list.value)
+//   }
+// }
+// 提交（二级评论）暂时禁用
+// const onSubmits = (result: ValidateResultContext<FormData>) => {
+//   if (result.validateResult === true) {
+//     handleReplys(list.value)
+//   }
+// }
+// 回复评论(一级评论)暂时禁用
+// const handleReply = async (val) => {
+//   // 校验输入框的内容
+//   replyData.value.ownerId = val.ownerId
+//   replyData.value.evaluationId = val.id
+//   replyData.value.parentId = 0
+//   replyData.value.content = replayValue.value.content
+//   await replayComments(targetTypeId.value.targetTypeId, replyData.value)
+//     .then((res) => {
+//       if (res.code === 200) {
+//         MessagePlugin.success('回复成功')
+//         replayValue.value.content = ''
+//         getData(requestData.value)
+//         handleCloseText()
+//         handleLoadMoreReply(requestListData.value)
+//       } else {
+//         MessagePlugin.error(`${res.msg}`)
+//       }
+//     })
+//     .catch((err) => {
+//       if (err === 'refreshToken') {
+//         handleReply(val)
+//       } else {
+//         console.log(err)
+//       }
+//     })
+// }
+// 回复评论（二级评论）暂时禁用
+// const handleReplys = async (val) => {
+//   // 校验输入框的内容
+//   if (val.ownerId) {
+//     replyData.value.ownerId = val.ownerId
+//   } else {
+//     replyData.value.ownerId = replyOwnerId.value
+//   }
+//   if (val.evaluationId) {
+//     replyData.value.evaluationId = val.evaluationId
+//   } else {
+//     replyData.value.evaluationId = replyEvaluationId.value
+//   }
+//   replyData.value.parentId = val.id
+//   replyData.value.content = replayValue.value.content
+//   await replayComments(targetTypeId.value.targetTypeId, replyData.value)
+//     .then((res) => {
+//       if (res.code === 200) {
+//         MessagePlugin.success('回复成功')
+//         // 情空输入框的内容
+//         replayValue.value.content = ''
+//         handleCloseText()
+//         getData(requestData.value)
+//         handleLoadMoreReply(requestListData.value)
+//       } else {
+//         MessagePlugin.error(`${res.msg}`)
+//       }
+//     })
+//     .catch((err) => {
+//       if (err === 'refreshToken') {
+//         handleReplys(val)
+//       } else {
+//         console.log(err)
+//       }
+//     })
+// }
 
 // 点击加载更多
 const handleLoadMore = () => {
@@ -566,25 +569,25 @@ const handleLoadMore = () => {
   requestData.value.pageNo += 1
   getData(requestData.value)
 }
-// 点击加载更多回复
-const handleLoadMoreReply = (val) => {
-  requestReplay.value.evaluationId = val.id
-  requestListData.value = val
-  requestReplay.value.pageSize += 100
-  // getReplyList(requestReplay.value)
-  //   .then((res) => {
-  //     if (res.code === 200) {
-  //       moreReplayData.value[val.id] = res.data.list
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     if (err === 'refreshToken') {
-  //       handleLoadMoreReply(val)
-  //     } else {
-  //       console.log(err)
-  //     }
-  //   })
-}
+// 点击加载更多回复暂时禁用
+// const handleLoadMoreReply = (val) => {
+//   requestReplay.value.evaluationId = val.id
+//   requestListData.value = val
+//   requestReplay.value.pageSize += 100
+//   getReplyList(requestReplay.value)
+//     .then((res) => {
+//       if (res.code === 200) {
+//         moreReplayData.value[val.id] = res.data.list
+//       }
+//     })
+//     .catch((err) => {
+//       if (err === 'refreshToken') {
+//         handleLoadMoreReply(val)
+//       } else {
+//         console.log(err)
+//       }
+//     })
+// }
 // 收起回复
 const handleRetractMoreReply = (val) => {
   moreReplayData.value[val.id] = []
@@ -603,7 +606,7 @@ const handleDeleteBtn = (id, val) => {
   dialogDeleteVisible.value = !dialogDeleteVisible.value
 }
 
-// 删除评论或者回复
+// 删除评论或者回复暂时禁用回复相关部分
 const confirmDelete = async () => {
   // 删除评论
   if (deleteVal.value === 1) {
@@ -629,6 +632,7 @@ const confirmDelete = async () => {
     //     }
     //   })
   } else {
+    // 删除回复暂时禁用
     // await deleteReply(deleteId.value, targetTypeId.value.targetTypeId)
     //   .then((res) => {
     //     if (res.code === 200) {
@@ -655,71 +659,71 @@ const handleDelete = () => {
   confirmDelete()
 }
 
-// 点击置顶或者取消置顶
-const handleSetTop = (id, top) => {
-  topId.value = id
-  topVal.value = top
-  if (top === 0) {
-    confirmTitle.value = '置顶评价'
-    confirmText.value = '此操作将置顶这条评价，是否继续？'
-  } else {
-    confirmTitle.value = '取消置顶'
-    confirmText.value = '此操作将取消置顶这条评价，是否继续？'
-  }
-  dialogConfirmVisible.value = !dialogConfirmVisible.value
-}
+// 点击置顶或者取消置顶暂时禁用
+// const handleSetTop = (id, top) => {
+//   topId.value = id
+//   topVal.value = top
+//   if (top === 0) {
+//     confirmTitle.value = '置顶评价'
+//     confirmText.value = '此操作将置顶这条评价，是否继续？'
+//   } else {
+//     confirmTitle.value = '取消置顶'
+//     confirmText.value = '此操作将取消置顶这条评价，是否继续？'
+//   }
+//   dialogConfirmVisible.value = !dialogConfirmVisible.value
+// }
 
-// 发送置顶或者取消置顶请求
-const confirmSetTop = async () => {
-  if (topVal.value === 0) {
-    // await setTop(topId.value, 1, targetType)
-    //   .then((res) => {
-    //     if (res.data.code === 200) {
-    //       getData(requestData.value)
-    //       dialogConfirmVisible.value = false
-    //       MessagePlugin.success('置顶成功')
-    //       moreReplayData.value = {}
-    //     } else {
-    //       MessagePlugin.error(`${res.data.msg}`)
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     if (err === 'refreshToken') {
-    //       confirmSetTop()
-    //     } else {
-    //       console.log(err)
-    //     }
-    //   })
-  } else {
-    // await setTop(topId.value, 0, targetType)
-    //   .then((res) => {
-    //     if (res.data.code === 200) {
-    //       getData(requestData.value)
-    //       dialogConfirmVisible.value = false
-    //       MessagePlugin.success('取消置顶成功')
-    //       moreReplayData.value = {}
-    //     } else {
-    //       MessagePlugin.error(`${res.data.msg}`)
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     if (err === 'refreshToken') {
-    //       confirmSetTop()
-    //     } else {
-    //       console.log(err)
-    //     }
-    //   })
-  }
-}
+// 发送置顶或者取消置顶请求暂时禁用
+// const confirmSetTop = async () => {
+//   if (topVal.value === 0) {
+//     await setTop(topId.value, 1, targetType)
+//       .then((res) => {
+//         if (res.code === 200) {
+//           getData(requestData.value)
+//           dialogConfirmVisible.value = false
+//           MessagePlugin.success('置顶成功')
+//           moreReplayData.value = {}
+//         } else {
+//           MessagePlugin.error(`${res.msg}`)
+//         }
+//       })
+//       .catch((err) => {
+//         if (err === 'refreshToken') {
+//           confirmSetTop()
+//         } else {
+//           console.log(err)
+//         }
+//       })
+//   } else {
+//     await setTop(topId.value, 0, targetType)
+//       .then((res) => {
+//         if (res.code === 200) {
+//           getData(requestData.value)
+//           dialogConfirmVisible.value = false
+//           MessagePlugin.success('取消置顶成功')
+//           moreReplayData.value = {}
+//         } else {
+//           MessagePlugin.error(`${res.msg}`)
+//         }
+//       })
+//       .catch((err) => {
+//         if (err === 'refreshToken') {
+//           confirmSetTop()
+//         } else {
+//           console.log(err)
+//         }
+//       })
+//   }
+// }
 
-// 确认置顶或者取消置顶,确认关闭或者开启评价
-const handleConfirm = () => {
-  if (confirmTitle.value === '关闭评价' || confirmTitle.value === '开启评价') {
-    confirmComments()
-  } else {
-    confirmSetTop()
-  }
-}
+// 确认置顶或者取消置顶,确认关闭或者开启评价暂时禁用
+// const handleConfirm = () => {
+//   if (confirmTitle.value === '关闭评价' || confirmTitle.value === '开启评价') {
+//     confirmComments()
+//   } else {
+//     confirmSetTop()
+//   }
+// }
 
 // 关闭弹窗
 const handleClose = () => {
@@ -752,51 +756,51 @@ const handleEmoji = (content) => {
   return newContent
 }
 
-// 根据id查询是否可评价
-const getEvaluationStatus = async () => {
-  const EvaluationStatus = ref({
-    targetTypeId: targetType,
-    targetId: id
-  })
-  // await getEvaluateById(EvaluationStatus.value).then((res) => {
-  //   evaluationStatus.value = res.data
-  // })
-}
+// 根据id查询是否可评价暂时禁用
+// const getEvaluationStatus = async () => {
+//   const EvaluationStatus = ref({
+//     targetTypeId: targetType,
+//     targetId: id
+//   })
+//   await getEvaluateById(EvaluationStatus.value).then((res) => {
+//     evaluationStatus.value = res.data
+//   })
+// }
 
-// 点击评价或者关闭评价
-const handleComments = (val) => {
-  if (val) {
-    confirmTitle.value = '关闭评价'
-    confirmText.value = '此操作将关闭评价，是否继续？'
-    dialogConfirmVisible.value = !dialogConfirmVisible.value
-  } else {
-    confirmTitle.value = '开启评价'
-    confirmText.value = '此操作将开启评价，是否继续？'
-    dialogConfirmVisible.value = !dialogConfirmVisible.value
-  }
-}
+// 点击评价或者关闭评价暂时禁用
+// const handleComments = (val) => {
+//   if (val) {
+//     confirmTitle.value = '关闭评价'
+//     confirmText.value = '此操作将关闭评价，是否继续？'
+//     dialogConfirmVisible.value = !dialogConfirmVisible.value
+//   } else {
+//     confirmTitle.value = '开启评价'
+//     confirmText.value = '此操作将开启评价，是否继续？'
+//     dialogConfirmVisible.value = !dialogConfirmVisible.value
+//   }
+// }
 
-// 确认关闭评价或开启评价
-const confirmComments = async () => {
-  const flag = !evaluationStatus.value
-  // await setEvaluateSwitch(targetType, id, flag)
-  //   .then((res) => {
-  //     if (res.data.code === 200) {
-  //       MessagePlugin.success('操作成功')
-  //       dialogConfirmVisible.value = false
-  //       getEvaluationStatus()
-  //     } else {
-  //       MessagePlugin.error(`${res.data.msg}`)
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     if (err === 'refreshToken') {
-  //       confirmComments()
-  //     } else {
-  //       console.log(err)
-  //     }
-  //   })
-}
+// 确认关闭评价或开启评价暂时禁用
+// const confirmComments = async () => {
+//   const flag = !evaluationStatus.value
+//   await setEvaluateSwitch(targetType, id, flag)
+//     .then((res) => {
+//       if (res.code === 200) {
+//         MessagePlugin.success('操作成功')
+//         dialogConfirmVisible.value = false
+//         getEvaluationStatus()
+//       } else {
+//         MessagePlugin.error(`${res.msg}`)
+//       }
+//     })
+//     .catch((err) => {
+//       if (err === 'refreshToken') {
+//         confirmComments()
+//       } else {
+//         console.log(err)
+//       }
+//     })
+// }
 </script>
 
 <style lang="less" scoped>

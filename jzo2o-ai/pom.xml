@@ -63,6 +63,10 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.jzo2o</groupId>
+            <artifactId>jzo2o-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

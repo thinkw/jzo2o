@@ -109,17 +109,18 @@
             </div>
           </div>
           <div class="op">
-            <div class="setTop" @click="handleClickSetTop(detailData)">
+            <!-- <div class="setTop" @click="handleClickSetTop(detailData)">
               <div></div>
               <span>{{ detailData.isTop == 0 ? '置顶' : '取消置顶' }}</span>
-            </div>
+            </div> -->
             <div class="delete" @click="handleClickDelete(detailData)">
               <div></div>
               <span>删除</span>
             </div>
           </div>
         </div>
-        <div class="card2">
+        <!-- 回复列表暂时禁用 -->
+        <!-- <div class="card2">
           <div v-for="(content, num) in replayAllData" :key="num" class="box">
             <div class="left2">
               <img
@@ -143,16 +144,15 @@
               </div>
               <div class="foot2">
                 <span>{{ content.createTime }}</span>
-                <!-- 操作 -->
                 <div class="operation">
-                  <!-- <div class="like">
+                  <div class="like">
                     <div></div>
                     <span>{{
                       item.statistics?.likeNumber
                         ? item.statistics?.likeNumber
                         : 0
                     }}</span>
-                  </div> -->
+                  </div>
                   <div class="delete" @click="handleDeleteBtn(content.id, 2)">
                     <div></div>
                     <span>删除</span>
@@ -186,10 +186,11 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
-    <div class="reply bg-wt">
+    <!-- 回复评价表单暂时禁用 -->
+    <!-- <div class="reply bg-wt">
       <div class="head">回复评价</div>
       <div class="body">
         <t-form
@@ -227,7 +228,7 @@
           </t-form-item>
         </t-form>
       </div>
-    </div>
+    </div> -->
   </div>
 
   <div class="boxBottom fx fx-ct bg-wt">
@@ -240,14 +241,14 @@
     @handle-delete="handleDelete"
     @handle-close="handleClose"
   ></Delete>
-  <!-- 确认置顶弹层 -->
-  <Confirm
+  <!-- 确认置顶弹层暂时禁用 -->
+  <!-- <Confirm
     :title="confirmTitle"
     :dialog-confirm-visible="dialogConfirmVisible"
     :confirm-text="confirmText"
     @handle-confirm="handleConfirm"
     @handle-close="handleClose"
-  ></Confirm>
+  ></Confirm> -->
 </template>
 
 <script setup lang="ts">

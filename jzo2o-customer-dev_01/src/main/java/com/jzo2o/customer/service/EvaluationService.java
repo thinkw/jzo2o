@@ -2,15 +2,18 @@ package com.jzo2o.customer.service;
 
 import com.jzo2o.api.customer.dto.request.EvaluationSubmitReqDTO;
 import com.jzo2o.common.model.CurrentUserInfo;
-import com.jzo2o.customer.model.dto.request.AuditReqDTO;
+import com.jzo2o.customer.model.domain.Evaluation;
 import com.jzo2o.customer.model.dto.request.EvaluationPageByTargetReqDTO;
-import com.jzo2o.customer.model.dto.request.LikeOrCancelReqDTO;
-import com.jzo2o.customer.model.dto.response.*;
+import com.jzo2o.customer.model.dto.response.EvaluationAndOrdersResDTO;
+import com.jzo2o.customer.model.dto.response.EvaluationResDTO;
+import com.jzo2o.customer.model.dto.response.BooleanResDTO;
 
 import java.util.List;
 import java.util.Map;
 
 /**
+ * 评价服务接口
+ *
  * @author itcast
  */
 public interface EvaluationService {
@@ -23,33 +26,35 @@ public interface EvaluationService {
     BooleanResDTO submit(EvaluationSubmitReqDTO evaluationSubmitReqDTO);
 
     /**
-     * 根据对象属性分页查询评价列表
+     * 修改评价
      *
-     * @param evaluationPageByTargetReqDTO 分页查询请求体
-     * @return 分页结果
+     * @param id                     评价id
+     * @param evaluationSubmitReqDTO 评价内容
      */
-    List<EvaluationResDTO> pageByTarget(EvaluationPageByTargetReqDTO evaluationPageByTargetReqDTO);
+    void update(Long id, EvaluationSubmitReqDTO evaluationSubmitReqDTO);
 
     /**
-     * 删除评价
+     * 根据id查询评价
+     *
+     * @param id 评价id
+     * @return 评价详情
+     */
+    EvaluationResDTO getById(Long id);
+
+    /**
+     * 删除评价（软删除）
      *
      * @param id 评价id
      */
-    void delete(String id);
+    void delete(Long id);
 
     /**
-     * 点赞或取消点赞
+     * 根据对象属性分页查询评价列表
      *
-     * @param likeOrCancelReqDTO 点赞请求数据
+     * @param evaluationPageByTargetReqDTO 分页查询请求体
+     * @return 分页结果，包含list和total
      */
-    void likeOrCancel(LikeOrCancelReqDTO likeOrCancelReqDTO);
-
-    /**
-     * 用户举报
-     *
-     * @param auditReqDTO 举报请求
-     */
-    void userReport(AuditReqDTO auditReqDTO);
+    Map<String, Object> pageByTarget(EvaluationPageByTargetReqDTO evaluationPageByTargetReqDTO);
 
     /**
      * 分页查询当前用户评价列表
@@ -74,16 +79,9 @@ public interface EvaluationService {
      * 根据订单id列表查询师傅评分
      *
      * @param orderIds 订单id列表
-     * @return 评分
+     * @return 订单id->评分
      */
     Map<String, Double> queryServeProviderScoreByOrdersId(List<Long> orderIds);
-
-    /**
-     * 获取评价系统信息
-     *
-     * @return 评价系统信息
-     */
-    EvaluationTokenDto getEvaluationInfo();
 
     /**
      * 根据对象类型和订单id查询评价
@@ -95,14 +93,7 @@ public interface EvaluationService {
     EvaluationResDTO queryByTargetTypeIdAndOrdersId(CurrentUserInfo currentUserInfo, String targetTypeId, Long ordersId);
 
     /**
-     * 查询所有的评价配置信息
-     *
-     * @return 评价配置信息
-     */
-    AllEvaluationSystemInfoResDTO findAllSystemInfo(CurrentUserInfo currentUserInfo);
-
-    /**
-     * 自动评价
+     * 自动评价（默认5分好评）
      *
      * @param evaluationSubmitReqDTO 评价信息
      */

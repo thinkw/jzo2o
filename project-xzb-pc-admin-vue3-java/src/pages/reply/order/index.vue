@@ -1,4 +1,3 @@
-<!-- 评价页，暂时先放在这里大概率换方案，不用这个 -->
 <template>
   <router-view v-if="url !== '/reply/index'"></router-view>
   <div v-else class="tab-wapper bg-wt">
@@ -65,7 +64,7 @@ import Delete from '@/components/Delete/index.vue' // 删除弹层
 import tableList from './components/TableList.vue' // 表格
 import searchFormBox from './components/SearchForm.vue' // 搜索框表单
 import switchBar from '@/components/switchBar/switchBartop.vue' // tab切换组件
-// import { deleteComments, replayComments } from '@/api/detail'
+import { deleteComments, replayComments } from '@/api/detail'
 import { DetailDataType } from './type'
 
 const initSearchId = ref('') // 初始化搜索框的值
@@ -230,21 +229,21 @@ const handleReset = () => {
 const fetchData = async (val) => {
   dataLoading.value = true
   try {
-    // await getList(val)
-    //   .then((res: any) => {
-    //     if (res.code === 200) {
-    //       listData.value = res.data.list
-    //       pagination.value.total = Number(res.data.total)
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //     if (err === 'refreshToken') {
-    //       fetchData(val)
-    //     } else {
-    //       dataLoading.value = false
-    //     }
-    //   })
+    await getList(val)
+      .then((res: any) => {
+        if (res.code === 200) {
+          listData.value = res.data.list
+          pagination.value.total = Number(res.data.total)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        if (err === 'refreshToken') {
+          fetchData(val)
+        } else {
+          dataLoading.value = false
+        }
+      })
   } finally {
     dataLoading.value = false
   }
@@ -272,23 +271,23 @@ const handleSetupContract = (val) => {
 }
 // 确认删除
 const handleDelete = async () => {
-  // await deleteComments(deleteData.value.id, replyType.value)
-  //   .then((res) => {
-  //     if (res.code === 200) {
-  //       fetchData(requestData.value)
-  //       dialogDeleteVisible.value = false
-  //       MessagePlugin.success('删除成功')
-  //     } else {
-  //       MessagePlugin.error(`删除失败,${res.msg}可能已被删除，请刷新后重试`)
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     if (err === 'refreshToken') {
-  //       handleDelete()
-  //     } else {
-  //       MessagePlugin.error(`删除失败,${err}`)
-  //     }
-  //   })
+  await deleteComments(deleteData.value.id, replyType.value)
+    .then((res) => {
+      if (res.code === 200) {
+        fetchData(requestData.value)
+        dialogDeleteVisible.value = false
+        MessagePlugin.success('删除成功')
+      } else {
+        MessagePlugin.error(`删除失败,${res.msg}可能已被删除，请刷新后重试`)
+      }
+    })
+    .catch((err) => {
+      if (err === 'refreshToken') {
+        handleDelete()
+      } else {
+        MessagePlugin.error(`删除失败,${err}`)
+      }
+    })
 }
 // 点击删除
 const handleClickDelete = (row) => {
@@ -302,23 +301,23 @@ const replayComment = async (val) => {
   replyData.value.evaluationId = DialogFormData.value.id
   replyData.value.parentId = 0
   replyData.value.content = val
-  // await replayComments(replyType.value, replyData.value)
-  //   .then((res) => {
-  //     if (res.code === 200) {
-  //       MessagePlugin.success('回复成功')
-  //       fetchData(requestData.value)
-  //       edit.value.onClickCloseBtn()
-  //     } else {
-  //       MessagePlugin.error(`回复失败,${res.msg}`)
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     if (err === 'refreshToken') {
-  //       replayComment(val)
-  //     } else {
-  //       console.log(err)
-  //     }
-  //   })
+  await replayComments(replyType.value, replyData.value)
+    .then((res) => {
+      if (res.code === 200) {
+        MessagePlugin.success('回复成功')
+        fetchData(requestData.value)
+        edit.value.onClickCloseBtn()
+      } else {
+        MessagePlugin.error(`回复失败,${res.msg}`)
+      }
+    })
+    .catch((err) => {
+      if (err === 'refreshToken') {
+        replayComment(val)
+      } else {
+        console.log(err)
+      }
+    })
 }
 // 获取选中项的ID
 const getActiveId = (val) => {

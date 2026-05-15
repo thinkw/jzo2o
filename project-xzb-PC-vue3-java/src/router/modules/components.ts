@@ -3,6 +3,7 @@ import orderIcon from '@/assets/test-img/icon_ddgl.svg'
 import seizeIcon from '@/assets/test-img/icon_ddgl_nor.svg'
 import personnelIcon from '@/assets/test-img/icon_fwry_nor.svg'
 import dispatchIcon from '@/assets/test-img/icon_pdgl_nor.svg'
+import { StarIcon } from 'tdesign-icons-vue-next'
 
 const normalRouter = [
   {
@@ -106,6 +107,28 @@ const normalRouter = [
           // 用来修改当出现子菜单在active状态不会激活父元素的active状态
           singles: true
         },
+      }
+    ]
+  },
+  {
+    path: '/evaluation',
+    name: 'evaluation',
+    component: Layout,
+    redirect: '/evaluation/information',
+    meta: {
+      title: '评价管理',
+      icon: StarIcon,
+      single: true
+    },
+    children: [
+      {
+        path: 'information',
+        name: 'evaluationInformation',
+        component: () => import('@/pages/evaluation/index.vue'),
+        meta: {
+          title: '评价管理',
+          singles: true
+        }
       }
     ]
   }

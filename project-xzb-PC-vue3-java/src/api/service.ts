@@ -144,3 +144,25 @@ export function serviceOrderAssignHistoryDetail(id) {
     url: '/orders-history/agency/orders/' + id
   })
 }
+
+// ==================== 评价管理 ====================
+
+// 分页查询评价列表
+export function getEvaluationList(params) {
+  return request.get({
+    url: '/customer/agency/evaluation/pageByTarget',
+    params
+  })
+}
+// 查询评价详情
+export function getEvaluationDetail(id) {
+  return request.get({
+    url: '/customer/agency/evaluation/' + id
+  })
+}
+// 删除评价
+export function deleteEvaluation(id) {
+  return request.delete({
+    url: '/customer/agency/evaluation/' + id
+  })
+}

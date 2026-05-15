@@ -19,7 +19,7 @@ spring:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
   profiles:
-    active: local
+    active: dev
   application:
     name: jzo2o-orders-manager
   main:
