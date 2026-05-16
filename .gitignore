@@ -89,3 +89,6 @@ job/
 /project-xzb-PC-vue3-java/DEV_LOG_20260514.md
 /jzo2o-customer-dev_01/src/main/resources/sql/evaluation.sql
 /project-xzb-PC-vue3-java/.claude/settings.local.json
+/jzo2o-ai-engine/data/checkpoints.db
+/jzo2o-ai-engine/data/checkpoints.db-shm
+/jzo2o-ai-engine/data/checkpoints.db-wal

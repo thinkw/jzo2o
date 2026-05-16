@@ -2164,7 +2164,7 @@ chardet@^0.7.0:
   resolved "https://registry.npmjs.org/chardet/-/chardet-0.7.0.tgz"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-cherry-markdown@^0.11.0-alpha-5:
+cherry-markdown@^0.11.0-alpha-5, cherry-markdown@^0.11.1:
   version "0.11.1"
   resolved "https://registry.npmjs.org/cherry-markdown/-/cherry-markdown-0.11.1.tgz"
   integrity sha512-s9wsRQJOIYoUT7sjMUWfjUJIGmmlRxo2nqO4m2yx/8JvvalihTu9ksTANZ1XQml2CWYF2VocMB+rx4MErpnm+A==

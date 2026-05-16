@@ -1,8 +1,9 @@
-/** AI 聊天状态管理 — 悬浮窗与侧边栏页共享 */
+/** AI 聊天状态管理 — 会话管理 + 消息状态共享 */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { listSessions, getSessionMessages } from '@/api/chat'
 import type { SessionInfo } from '@/api/chat'
+import type { ChatMessagesData } from '@tdesign-vue-next/chat'
 
 export interface ChatMsg {
   role: 'user' | 'assistant'
@@ -13,20 +14,14 @@ export const useChatStore = defineStore('chat', () => {
   /** 渲染模式: floating=悬浮窗, sidebar=侧边栏页 */
   const mode = ref<'floating' | 'sidebar'>('floating')
 
-  /** 对话历史 */
-  const messages = ref<ChatMsg[]>([])
-
-  /** 当前流式接收中的内容 */
-  const streamingContent = ref('')
-
-  /** 是否等待 AI 回复 */
-  const loading = ref(false)
-
   /** 会话 ID */
   const sessionId = ref(generateSessionId())
 
   /** 历史会话列表 */
   const sessions = ref<SessionInfo[]>([])
+
+  /** 共享消息列表：悬浮窗和侧边栏共享同一份消息 */
+  const sharedMessages = ref<ChatMessagesData[]>([])
 
   function generateSessionId(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -34,44 +29,6 @@ export const useChatStore = defineStore('chat', () => {
       const v = c === 'x' ? r : (r & 0x3) | 0x8
       return v.toString(16)
     })
-  }
-
-  /** 添加用户消息 */
-  function addUserMessage(content: string) {
-    messages.value.push({ role: 'user', content })
-  }
-
-  /** 流式结束: 将累积内容写入正式消息 */
-  function finishStreaming() {
-    if (streamingContent.value) {
-      messages.value.push({ role: 'assistant', content: streamingContent.value })
-    }
-    streamingContent.value = ''
-    loading.value = false
-  }
-
-  /** 取消流式: 丢弃已累积的部分内容 (不写入消息历史) */
-  function cancelStreaming() {
-    streamingContent.value = ''
-    loading.value = false
-  }
-
-  /** 追加流式内容片段 */
-  function appendStreamChunk(chunk: string) {
-    streamingContent.value += chunk
-  }
-
-  /** 错误处理 */
-  function handleError(error: string) {
-    messages.value.push({ role: 'assistant', content: `[错误] ${error}` })
-    streamingContent.value = ''
-    loading.value = false
-  }
-
-  /** 开始新一轮请求 */
-  function startRequest() {
-    loading.value = true
-    streamingContent.value = ''
   }
 
   /** 切换到侧边栏模式 */
@@ -86,10 +43,8 @@ export const useChatStore = defineStore('chat', () => {
 
   /** 重置会话(新建会话) */
   function resetSession() {
-    messages.value = []
-    streamingContent.value = ''
-    loading.value = false
     sessionId.value = generateSessionId()
+    sharedMessages.value = []  // 同时清空共享消息
   }
 
   /** 加载历史会话列表 */
@@ -97,36 +52,65 @@ export const useChatStore = defineStore('chat', () => {
     sessions.value = await listSessions()
   }
 
-  /** 切换到指定会话, 加载消息历史 */
-  async function switchSession(sid: string) {
-    messages.value = []
-    streamingContent.value = ''
-    loading.value = false
+  /** 切换到指定会话, 返回转换后的消息数据 */
+  async function switchSession(sid: string): Promise<ChatMessagesData[]> {
     sessionId.value = sid
     const msgs = await getSessionMessages(sid)
-    messages.value = msgs.map(m => ({
-      role: m.role as 'user' | 'assistant',
-      content: m.content,
-    }))
+    const chatMsgs = toChatMessagesData(msgs)
+    sharedMessages.value = chatMsgs  // 同步到共享消息
+    return chatMsgs
+  }
+
+  /** 更新共享消息列表 */
+  function updateSharedMessages(msgs: ChatMessagesData[]) {
+    sharedMessages.value = msgs
+  }
+
+  /** 将后端消息格式转为 TDesign Chatbot 格式 */
+  function toChatMessagesData(msgs: ChatMsg[]): ChatMessagesData[] {
+    return msgs.map((m, i) => {
+      const id = `msg-${Date.now()}-${i}`
+      if (m.role === 'user') {
+        return {
+          id,
+          role: 'user' as const,
+          content: [{ type: 'text' as const, data: m.content }],
+        }
+      } else {
+        return {
+          id,
+          role: 'assistant' as const,
+          content: [{ type: 'markdown' as const, data: m.content }],
+        }
+      }
+    })
+  }
+
+  /** 提取消息中的纯文本内容 */
+  function getMessageText(msg: ChatMessagesData): string {
+    if (!msg.content) return ''
+    return msg.content
+      .map(c => {
+        if (c.type === 'text' || c.type === 'markdown') {
+          return typeof c.data === 'string' ? c.data : ''
+        }
+        return ''
+      })
+      .join('')
   }
 
   return {
     mode,
-    messages,
-    streamingContent,
-    loading,
     sessionId,
     sessions,
-    addUserMessage,
-    finishStreaming,
-    cancelStreaming,
-    appendStreamChunk,
-    handleError,
-    startRequest,
+    sharedMessages,
     enterSidebar,
     enterFloating,
     resetSession,
     loadSessions,
     switchSession,
+    updateSharedMessages,
+    toChatMessagesData,
+    getMessageText,
   }
 })

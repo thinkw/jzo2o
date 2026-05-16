@@ -29,18 +29,15 @@
 
     <!-- 右侧聊天区 -->
     <div class="chat-main">
-      <ChatMessageList
-        ref="listRef"
-        class="ai-chat-list"
-        :messages="chatStore.messages"
-        :streamingContent="chatStore.streamingContent"
-        :loading="chatStore.loading"
-      />
-      <div class="ai-chat-footer">
-        <ChatInput
-          :loading="chatStore.loading"
-          @send="handleSend"
-          @stop="handleStop"
+      <div class="ai-chat-list">
+        <Chatbot
+          ref="chatbotRef"
+          class="chatbot-full"
+          :default-messages="defaultMessages"
+          :chat-service-config="serviceConfig"
+          :list-props="{ autoScroll: true }"
+          :sender-props="{ placeholder: '输入你的问题...' }"
+          :message-props="{ assistant: { chatContentProps: { markdown: { options: markdownOptions } } } }"
         />
       </div>
     </div>
@@ -48,73 +45,187 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
-import { sendChatMessage } from '@/api/chat'
+import { Chatbot } from '@tdesign-vue-next/chat'
+import type { ChatMessagesData, ChatServiceConfig, ChatRequestParams, SSEChunkData } from '@tdesign-vue-next/chat'
 import { useChatStore } from '@/store/modules/chat'
-import ChatMessageList from '@/components/chat/ChatMessageList.vue'
-import ChatInput from '@/components/chat/ChatInput.vue'
+import { cancelChat } from '@/api/chat'
+import proxy from '@/config/proxy'
+import { TOKEN_NAME } from '@/config/global'
+
+const env = import.meta.env.MODE || 'development'
+const baseHost = env === 'mock' || !proxy.isRequestProxy ? '' : proxy[env].host
 
 const chatStore = useChatStore()
-const listRef = ref<InstanceType<typeof ChatMessageList>>()
-let currentSession: { promise: Promise<void>; cancel: () => void } | null = null
+const chatbotRef = ref<InstanceType<typeof Chatbot>>()
 
-onMounted(() => {
+/** 初始/历史消息 */
+const defaultMessages = ref<ChatMessagesData[]>([])
+
+/** 同步间隔计时器 ID */
+let syncIntervalId: ReturnType<typeof setInterval> | null = null
+
+onMounted(async () => {
   chatStore.enterSidebar()
-  chatStore.loadSessions()
-  nextTick(() => scrollToBottom())
+  await chatStore.loadSessions()
+
+  // 如果从悬浮窗切换过来，有共享消息则同步
+  if (chatStore.sharedMessages.length > 0) {
+    defaultMessages.value = [...chatStore.sharedMessages]
+    // 等待 Chatbot 挂载后设置消息
+    setTimeout(() => {
+      chatbotRef.value?.setMessages?.(chatStore.sharedMessages, 'replace')
+    }, 100)
+  }
+
+  // 启动快速同步：将 Chatbot 消息同步回 store（200ms 更及时）
+  syncIntervalId = setInterval(syncMessagesToStore, 200)
 })
 
-function scrollToBottom() {
-  const el = listRef.value?.$el
-  if (el) {
-    el.scrollTop = el.scrollHeight
+onBeforeUnmount(() => {
+  // 离开前同步消息到 store
+  syncMessagesToStore()
+  if (syncIntervalId) {
+    clearInterval(syncIntervalId)
+  }
+})
+
+/** 同步当前消息到 store */
+function syncMessagesToStore() {
+  const store = chatbotRef.value?.messagesStore as { messages?: ChatMessagesData[] } | undefined
+  if (store?.messages && store.messages.length > 0) {
+    chatStore.updateSharedMessages([...store.messages])
   }
 }
 
-async function handleSend(content: string) {
-  chatStore.addUserMessage(content)
-  chatStore.startRequest()
-
-  const recentMessages = chatStore.messages.slice(-20)
-  currentSession = sendChatMessage(recentMessages, chatStore.sessionId, {
-    onChunk(chunk: string) {
-      chatStore.appendStreamChunk(chunk)
-    },
-    onDone() {
-      chatStore.finishStreaming()
-      currentSession = null
-    },
-    onError(error: string) {
-      chatStore.handleError(error)
-      currentSession = null
-    },
-  })
-
-  await currentSession.promise
-}
-
-function handleStop() {
-  currentSession?.cancel()
-  chatStore.cancelStreaming()
-  currentSession = null
-}
-
-function newChat() {
-  handleStop()
+/** 新建对话 */
+async function newChat() {
+  chatbotRef.value?.clearHistory?.()
   chatStore.resetSession()
+  defaultMessages.value = []
 }
 
+/** 切换会话 */
 async function switchToSession(sessionId: string) {
-  handleStop()
-  await chatStore.switchSession(sessionId)
-  nextTick(() => scrollToBottom())
+  const msgs = await chatStore.switchSession(sessionId)
+  chatbotRef.value?.setMessages?.(msgs, 'replace')
 }
 
-onBeforeRouteLeave((_to, _from, next) => {
-  handleStop()
+/** 从消息中提取纯文本 */
+function getMessageText(msg: ChatMessagesData): string {
+  if (!msg.content) return ''
+  return msg.content
+    .map(c => {
+      if (c.type === 'text' || c.type === 'markdown') {
+        return typeof c.data === 'string' ? c.data : ''
+      }
+      return ''
+    })
+    .join('')
+}
+
+/** 获取最近消息（用于发送给后端） */
+function getRecentMessages(): { role: 'user' | 'assistant'; content: string }[] {
+  // messagesStore 返回 { messageIds: string[], messages: ChatMessagesData[] }
+  const store = chatbotRef.value?.messagesStore as { messages?: ChatMessagesData[] } | undefined
+  const msgs = store?.messages || []
+  return msgs.slice(-20).map(m => ({
+    role: m.role as 'user' | 'assistant',
+    content: getMessageText(m),
+  }))
+}
+
+/** Chatbot 服务配置 */
+const serviceConfig: ChatServiceConfig = {
+  endpoint: `${baseHost}/api/ai/consumer/chat/completions`,
+  stream: true,
+
+  /** 自定义请求：注入 Authorization + messages 数组 + sessionId */
+  onRequest(params: ChatRequestParams) {
+    const token = localStorage.getItem(TOKEN_NAME)
+    const recentMessages = getRecentMessages()
+    // params.prompt 是用户当前输入，但还未写入 messagesStore，需手动追加
+    if (params.prompt) {
+      recentMessages.push({ role: 'user' as const, content: params.prompt })
+    }
+    return {
+      ...params,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token || '',
+      },
+      body: JSON.stringify({
+        messages: recentMessages,
+        sessionId: chatStore.sessionId,
+        stream: true,
+      }),
+    }
+  },
+
+  /** 解析我们后端的自定义 SSE 格式：每行纯文本 */
+  onMessage(chunk: SSEChunkData) {
+    const data = chunk.data
+    if (!data || data === '[DONE]' || (typeof data === 'string' && data.startsWith('[ERROR]'))) {
+      return null
+    }
+    // 后端每行返回纯文本 → 作为 markdown 内容追加
+    return { type: 'markdown' as const, data: (data as string) + '\n' }
+  },
+
+  /** 取消时通知 Java 端关闭 WebSocket */
+  async onAbort() {
+    cancelChat(chatStore.sessionId)
+  },
+
+  /** 错误处理 */
+  onError(err: Error | Response) {
+    console.error('Chat error:', err)
+  },
+}
+
+/** Markdown 渲染配置：Cherry Markdown 引擎，支持 LaTeX 数学公式和 Mermaid 图表 */
+const markdownOptions = {
+  engine: {
+    global: {
+      flowSessionContext: true,
+    },
+    syntax: {
+      // 数学公式配置 - 启用 trust 以支持更多 LaTeX 命令
+      mathBlock: {
+        engine: 'katex',
+        katexConfig: {
+          trust: true,
+          strict: false,
+          throwOnError: false,
+        },
+      },
+      inlineMath: {
+        engine: 'katex',
+        katexConfig: {
+          trust: true,
+          strict: false,
+          throwOnError: false,
+        },
+      },
+      // Mermaid 图表配置 - 自动检测 ```mermaid 块
+      codeBlock: {
+        wrap: false,
+        lineNumber: false,
+        copyCode: true,
+        editCode: false,
+        mermaid: {
+          svg2img: false,
+          showSourceToolbar: true,
+        },
+      },
+    },
+  },
+}
+
+onBeforeRouteLeave(() => {
   chatStore.enterFloating()
-  next()
 })
 </script>
 
@@ -192,16 +303,19 @@ onBeforeRouteLeave((_to, _from, next) => {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100%;
 }
 .ai-chat-list {
   flex: 1;
-  overflow-y: auto;
   min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
-.ai-chat-footer {
-  flex-shrink: 0;
-  padding: 12px 16px;
-  background: #fff;
-  border-top: 1px solid var(--td-component-border, #e8e8e8);
+.chatbot-full {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 </style>
