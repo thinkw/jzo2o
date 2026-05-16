@@ -14,8 +14,15 @@ class Settings:
     llm_temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.0"))
     llm_max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "4096"))
 
+    # Tavily 联网搜索
+    tavily_api_key: str = os.getenv("TAVILY_API_KEY", "")
+
     # 工具配置
     tool_timeout: int = int(os.getenv("TOOL_TIMEOUT", "120"))
+
+    # 检查点持久化 (SQLite, 进程重启后恢复对话状态)
+    checkpoint_db_path: str = os.getenv("CHECKPOINT_DB_PATH",
+                                         "data/checkpoints.db")
 
     # 服务配置
     server_host: str = os.getenv("SERVER_HOST", "0.0.0.0")

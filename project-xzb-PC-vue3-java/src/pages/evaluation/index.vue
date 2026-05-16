@@ -15,7 +15,7 @@
           row-key="id"
           vertical-align="middle"
           :hover="true"
-          :pagination="pagination.total <= 10 || !pagination.total ? null : pagination"
+          :pagination="pagination.total <= 10 || !pagination.total ? false : pagination"
           :loading="dataLoading"
           :sort="sort"
           table-layout="fixed"
@@ -147,13 +147,18 @@ const fetchData = async () => {
   dataLoading.value = true
   try {
     const res = await getEvaluationList(requestData.value)
-    if (res.code === 200) {
-      listData.value = res.data.list || []
-      pagination.value.total = Number(res.data.total || 0)
+    // 兼容两种响应格式:
+    // 1. 经过 PackResultFilter 包装: { code: 200, data: { list, total } }
+    // 2. 原始 Map 格式: { list, total }
+    const isWrapped = typeof res?.code !== 'undefined'
+    const payload = isWrapped ? res.data : res
+    if (isWrapped ? res.code === 200 : true) {
+      listData.value = payload?.list || []
+      pagination.value.total = Number(payload?.total || 0)
     }
-    dataLoading.value = false
   } catch (err) {
-    console.error(err)
+    console.error('获取评价列表失败:', err)
+  } finally {
     dataLoading.value = false
   }
 }

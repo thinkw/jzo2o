@@ -2,6 +2,13 @@
 职责: Prompt编排、LangChain运行、工具调用决策、LLM适配
 严禁: 直接操作生产DB、执行扣款/改订单状态等业务逻辑
 """
+import warnings
+try:
+    from langchain_core._api.deprecation import LangChainPendingDeprecationWarning
+except ImportError:
+    LangChainPendingDeprecationWarning = DeprecationWarning
+warnings.filterwarnings("ignore", category=LangChainPendingDeprecationWarning)
+
 import uvicorn
 from fastapi import FastAPI
 from app.api.chat import router as chat_router

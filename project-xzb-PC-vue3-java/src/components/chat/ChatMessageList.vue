@@ -1,56 +1,63 @@
 <!-- 聊天消息列表 — 基于 TDesign ChatList + ChatMessage -->
 <template>
-  <ChatList
-    v-if="messages.length || loading"
-    class="chat-message-list"
-    :auto-scroll="true"
-  >
-    <ChatMessage
-      v-for="(msg, idx) in messages"
-      :key="idx"
-      :role="msg.role"
-      :placement="msg.role === 'user' ? 'right' : 'left'"
-      :variant="msg.role === 'user' ? 'base' : 'text'"
-      :actions="false"
-      :avatar="msg.role === 'user' ? '我' : 'AI'"
+  <div class="chat-message-list">
+    <ChatList
+      v-if="messages.length || loading"
+      :auto-scroll="true"
     >
-      <template #content>
-        <ChatMarkdown :content="msg.content" />
-      </template>
-    </ChatMessage>
+      <ChatMessage
+        v-for="(msg, idx) in messages"
+        :key="idx"
+        :role="msg.role"
+        :placement="msg.role === 'user' ? 'right' : 'left'"
+        :variant="msg.role === 'user' ? 'base' : 'text'"
+        :actions="false"
+      >
+        <template #avatar>
+          <span class="custom-avatar">{{ msg.role === 'user' ? '👤' : '🤖' }}</span>
+        </template>
+        <template #content>
+          <ChatMarkdown :content="msg.content" />
+        </template>
+      </ChatMessage>
 
-    <!-- 流式加载中的 AI 回复: 不用 status='streaming'(会隐藏 content slot) -->
-    <ChatMessage
-      v-if="loading && streamingContent"
-      role="assistant"
-      placement="left"
-      variant="text"
-      :actions="false"
-      avatar="AI"
-    >
-      <template #content>
-        <ChatMarkdown :content="streamingContent" :streaming="true" />
-      </template>
-    </ChatMessage>
+      <!-- 流式加载中的 AI 回复 -->
+      <ChatMessage
+        v-if="loading && streamingContent"
+        role="assistant"
+        placement="left"
+        variant="text"
+        :actions="false"
+      >
+        <template #avatar>
+          <span class="custom-avatar">🤖</span>
+        </template>
+        <template #content>
+          <ChatMarkdown :content="streamingContent" :streaming="true" />
+        </template>
+      </ChatMessage>
 
-    <!-- 等待中(还没收到第一个 token) — 用 ChatLoading 组件 -->
-    <ChatMessage
-      v-if="loading && !streamingContent"
-      role="assistant"
-      placement="left"
-      variant="text"
-      :actions="false"
-      avatar="AI"
-    >
-      <template #content>
-        <span class="loading-text">思考中...</span>
-      </template>
-    </ChatMessage>
-  </ChatList>
+      <!-- 等待中(还没收到第一个 token) -->
+      <ChatMessage
+        v-if="loading && !streamingContent"
+        role="assistant"
+        placement="left"
+        variant="text"
+        :actions="false"
+      >
+        <template #avatar>
+          <span class="custom-avatar">🤖</span>
+        </template>
+        <template #content>
+          <span class="loading-text">思考中...</span>
+        </template>
+      </ChatMessage>
+    </ChatList>
 
-  <!-- 空态 -->
-  <div v-if="!messages.length && !loading" class="chat-empty">
-    你好，我是云岚到家 AI 助手，有什么可以帮你的？
+    <!-- 空态 -->
+    <div v-if="!messages.length && !loading" class="chat-empty">
+      你好，我是云岚到家 AI 助手，有什么可以帮你的？
+    </div>
   </div>
 </template>
 
@@ -76,6 +83,10 @@ defineProps<{
   color: #999;
   font-style: italic;
   font-size: 14px;
+}
+.custom-avatar {
+  font-size: 20px;
+  line-height: 1;
 }
 .chat-empty {
   display: flex;

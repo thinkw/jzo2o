@@ -54,17 +54,15 @@ public class EvaluationController {
     }
 
     @GetMapping("/summarize")
-    @ApiOperation("查询/生成 AI 评价总结 (已有则返回, 无则自动生成)")
+    @ApiOperation("查询/生成 AI 评价总结 (内部检测增量, 有新评价则合并生成, 无新评价则返回旧总结)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "targetTypeId", value = "评价目标类型 (7=服务人员)", required = true, dataTypeClass = Integer.class),
             @ApiImplicitParam(name = "targetId", value = "目标ID", required = true, dataTypeClass = Long.class)
     })
     public Map<String, String> getSummary(@RequestParam("targetTypeId") Integer targetTypeId,
                                            @RequestParam("targetId") Long targetId) {
-        Map<String, String> existing = aiApi.getEvaluationSummary(targetTypeId, targetId);
-        if (existing != null && existing.get("summary") != null && !existing.get("summary").isEmpty()) {
-            return existing;
-        }
+        // 直接走增量总结逻辑: summarize() 内部会检测是否有新评价,
+        // 有则合并旧总结+新评价生成新总结, 无则返回旧总结
         return aiApi.summarizeEvaluation(targetTypeId, targetId);
     }
 }

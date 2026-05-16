@@ -21,7 +21,7 @@
         table-layout="fixed"
         table-content-width="100%"
         :pagination="
-          pagination.total <= 10 || !pagination.total ? null : pagination
+          pagination.total <= 10 || !pagination.total ? false : pagination
         "
         :disable-data-page="pagination.total <= 10"
       >

@@ -19,6 +19,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -148,9 +151,60 @@ public class ChatServiceImpl implements ChatService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void cancel(String sessionId) {
+        log.info("前端请求取消会话, sessionId={}", sessionId);
+        aiEngineWebSocketClient.cancelSession(sessionId);
+    }
+
     /**
      * 保存聊天记录到数据库
      */
+    @Override
+    public List<Map<String, Object>> listSessions() {
+        CurrentUserInfo user = UserContext.currentUser();
+        // 子查询: 每 session 取第一条用户消息作为预览, 按最新消息倒序
+        List<AiChatRecord> records = aiChatRecordMapper.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AiChatRecord>()
+                        .eq(AiChatRecord::getUserId, user.getId())
+                        .eq(AiChatRecord::getRole, "user")
+                        .orderByDesc(AiChatRecord::getCreateTime)
+        );
+        // 按 sessionId 去重, 保留每个 session 的第一条消息
+        Map<String, Map<String, Object>> sessionMap = new java.util.LinkedHashMap<>();
+        for (AiChatRecord r : records) {
+            if (!sessionMap.containsKey(r.getSessionId())) {
+                Map<String, Object> item = new java.util.HashMap<>();
+                item.put("sessionId", r.getSessionId());
+                item.put("preview", r.getContent().length() > 50
+                        ? r.getContent().substring(0, 50) + "..." : r.getContent());
+                item.put("lastTime", r.getCreateTime().toString());
+                sessionMap.put(r.getSessionId(), item);
+            }
+        }
+        return new ArrayList<>(sessionMap.values());
+    }
+
+    @Override
+    public List<Map<String, Object>> getSessionMessages(String sessionId) {
+        CurrentUserInfo user = UserContext.currentUser();
+        List<AiChatRecord> records = aiChatRecordMapper.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AiChatRecord>()
+                        .eq(AiChatRecord::getUserId, user.getId())
+                        .eq(AiChatRecord::getSessionId, sessionId)
+                        .orderByAsc(AiChatRecord::getCreateTime)
+        );
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (AiChatRecord r : records) {
+            Map<String, Object> item = new java.util.HashMap<>();
+            item.put("role", r.getRole());
+            item.put("content", r.getContent());
+            item.put("createTime", r.getCreateTime().toString());
+            result.add(item);
+        }
+        return result;
+    }
+
     private void saveRecord(Long userId, Integer userType, String sessionId, String role, String content) {
         AiChatRecord record = new AiChatRecord();
         record.setUserId(userId);

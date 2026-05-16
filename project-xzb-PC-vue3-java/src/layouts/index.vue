@@ -78,6 +78,16 @@ watch(
       .scrollTo({ top: 0, behavior: 'smooth' })
   }
 )
+
+// 当进入侧边栏聊天页时，自动关闭悬浮窗
+watch(
+  () => chatStore.mode,
+  (newMode) => {
+    if (newMode === 'sidebar') {
+      showChat.value = false
+    }
+  }
+)
 </script>
 
 <style lang="less" scoped>

@@ -8,7 +8,7 @@ import asyncio
 import json
 from typing import Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from app.agent import build_graph, ToolExecutionContext
+from app.agent import build_graph, ToolExecutionContext, get_checkpointer
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -37,6 +37,9 @@ async def ws_chat(websocket: WebSocket, session_id: str):
     """WebSocket 聊天端点, 一个连接对应一个 session"""
     await websocket.accept()
     logger.info("WebSocket 已连接, session_id=%s", session_id)
+
+    # 获取共享的持久化 checkpointer (所有会话共用)
+    checkpointer = await get_checkpointer()
 
     cancel_event = asyncio.Event()
     incoming_queue: asyncio.Queue = asyncio.Queue()
@@ -71,6 +74,7 @@ async def ws_chat(websocket: WebSocket, session_id: str):
                 else:
                     logger.warning("未知 WS 消息类型: %s", msg_type)
         except WebSocketDisconnect:
+            logger.info("WebSocket 读取端断开, session_id=%s", session_id)
             await incoming_queue.put({"type": "__disconnect__"})
 
     # =========================================================================
@@ -93,10 +97,22 @@ async def ws_chat(websocket: WebSocket, session_id: str):
     # =========================================================================
     async def run_agent(messages_list: list[dict]):
         """运行 LangGraph Agent, 将 token 和 tool 事件推入 send_queue"""
+        heartbeat_task: Optional[asyncio.Task] = None
+
+        async def heartbeat():
+            """每 20s 发送 heartbeat, 保活 WebSocket/SSE 长连接"""
+            while not cancel_event.is_set():
+                await asyncio.sleep(20)
+                if not cancel_event.is_set():
+                    await send_queue.put({"type": "heartbeat"})
+
         try:
-            agent = build_graph(tool_ctx)
+            agent = build_graph(tool_ctx, checkpointer)
             langchain_messages = _dicts_to_messages(messages_list)
             config = {"configurable": {"thread_id": session_id}}
+
+            # 启动心跳协程
+            heartbeat_task = asyncio.create_task(heartbeat())
 
             buffer = ""
             async for chunk, _metadata in agent.astream(
@@ -130,6 +146,10 @@ async def ws_chat(websocket: WebSocket, session_id: str):
                 # tool_call / tool_result 由 graph 节点内部的 tool_ctx 处理,
                 # 这里不需要额外干预
 
+            # 取消心跳
+            if heartbeat_task and not heartbeat_task.done():
+                heartbeat_task.cancel()
+
             # 发送最后一行
             if buffer and not cancel_event.is_set():
                 await send_queue.put({
@@ -148,6 +168,10 @@ async def ws_chat(websocket: WebSocket, session_id: str):
                 await send_queue.put({"type": "error", "message": str(e)})
             except Exception:
                 pass
+        finally:
+            # 确保心跳协程已停止
+            if heartbeat_task and not heartbeat_task.done():
+                heartbeat_task.cancel()
 
     # =========================================================================
     # 主循环 — 接收消息 → 启动/取消 Agent
@@ -160,6 +184,7 @@ async def ws_chat(websocket: WebSocket, session_id: str):
             msg = await incoming_queue.get()
 
             if msg.get("type") == "__disconnect__":
+                logger.info("收到断开信号, 主循环退出, session_id=%s", session_id)
                 break
 
             if msg.get("type") == "user_message":

@@ -80,7 +80,12 @@ public class EvaluationSummaryServiceImpl implements EvaluationSummaryService {
         @SuppressWarnings({"unchecked", "rawtypes"})
         List<Map<String, Object>> newEvals = (List) JSONUtil.toList(newEvaluationsJson, Map.class);
         if (newEvals == null || newEvals.isEmpty()) {
-            log.info("无新评价, 跳过总结: targetTypeId={}, targetId={}", targetTypeId, targetId);
+            // 有新评价则走增量总结, 无新评价则返回旧总结(若存在)
+            if (!prevSummary.isEmpty()) {
+                log.info("无新评价, 返回旧总结: targetTypeId={}, targetId={}", targetTypeId, targetId);
+                return prevSummary;
+            }
+            log.info("无新评价且无旧总结, 跳过: targetTypeId={}, targetId={}", targetTypeId, targetId);
             throw new RuntimeException("该目标暂无新评价数据");
         }
         log.info("发现 {} 条新评价: targetTypeId={}, targetId={}", newEvals.size(), targetTypeId, targetId);

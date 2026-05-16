@@ -43,27 +43,40 @@ public class ToolExecutor {
 
         switch (toolName) {
             case "customer_order_query": {
-                String orderIdStr = (String) args.get("order_id");
-                Long orderId = Long.valueOf(orderIdStr);
-                OrderResDTO order = ordersApi.queryById(orderId);
-                return JSONUtil.toJsonStr(order);
+                // LLM 可能传 String 或 Integer, 统一转换为 Long
+                Long orderId = toLong(args.get("order_id"));
+                if (orderId == null) {
+                    return toError("缺少参数 order_id");
+                }
+                try {
+                    OrderResDTO order = ordersApi.queryById(orderId);
+                    if (order == null) {
+                        return toError("订单不存在: " + orderId);
+                    }
+                    return safeToJson(order);
+                } catch (Exception e) {
+                    return toError("查询订单失败: " + e.getMessage());
+                }
             }
             case "get_evaluation_summary": {
                 // 读取上次 AI 总结内容 (evaluation_summary 表)
                 Integer targetTypeId = toInt(args.get("target_type_id"));
                 Long targetId = toLong(args.get("target_id"));
+                if (targetTypeId == null || targetId == null) {
+                    return toError("缺少参数 target_type_id 或 target_id");
+                }
                 EvaluationSummary summary = evaluationSummaryMapper.selectOne(
                         new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<EvaluationSummary>()
                                 .eq(EvaluationSummary::getTargetTypeId, targetTypeId)
                                 .eq(EvaluationSummary::getTargetId, targetId)
                 );
                 if (summary == null) {
-                    return JSONUtil.toJsonStr(Map.of(
+                    return safeToJson(Map.of(
                             "has_previous", false,
                             "summary", "",
                             "last_evaluation_time", ""));
                 }
-                return JSONUtil.toJsonStr(Map.of(
+                return safeToJson(Map.of(
                         "has_previous", true,
                         "summary", summary.getSummaryContent() != null ? summary.getSummaryContent() : "",
                         "last_evaluation_time", summary.getLastEvaluationTime() != null
@@ -73,14 +86,37 @@ public class ToolExecutor {
                 // 查询指定目标的新增评价 (Feign → jzo2o-customer)
                 Integer targetTypeId = toInt(args.get("target_type_id"));
                 Long targetId = toLong(args.get("target_id"));
-                String afterTime = (String) args.get("after_time");  // ISO 时间字符串, 可能为空
-                return evaluationApi.queryByTargetIdAndTime(targetTypeId, targetId, afterTime);
+                if (targetTypeId == null || targetId == null) {
+                    return toError("缺少参数 target_type_id 或 target_id");
+                }
+                String afterTime = args.get("after_time") instanceof String
+                        ? (String) args.get("after_time")
+                        : null;
+                try {
+                    String result = evaluationApi.queryByTargetIdAndTime(targetTypeId, targetId, afterTime);
+                    return result != null ? result : toError("查询评价返回为空");
+                } catch (Exception e) {
+                    return toError("查询评价失败: " + e.getMessage());
+                }
             }
             default: {
                 log.warn("未知远程工具: {}", toolName);
-                return JSONUtil.toJsonStr(Map.of("error", "未知工具: " + toolName));
+                return toError("未知工具: " + toolName);
             }
         }
+    }
+
+    /** 生成错误 JSON, 保证永不为 null */
+    private static String toError(String msg) {
+        return "{\"error\": \"" + (msg != null ? msg.replace("\"", "'") : "unknown") + "\"}";
+    }
+
+    /** 安全 JSON 序列化, 保证永不为 null */
+    private static String safeToJson(Object obj) {
+        if (obj == null) {
+            return "null";
+        }
+        return JSONUtil.toJsonStr(obj);
     }
 
     private static Integer toInt(Object val) {

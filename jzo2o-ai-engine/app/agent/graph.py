@@ -1,10 +1,13 @@
 """Agent 图构建 — StateGraph 编排 LLM 调用和工具执行"""
 import logging
-from typing import Literal
+import os
+from pathlib import Path
+from typing import Literal, Optional
 
 from langchain_core.messages import AIMessage, ToolMessage
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 from .state import AgentState
 from .tools import ALL_TOOLS, REMOTE_TOOL_NAMES, local_tools_by_name
@@ -12,12 +15,42 @@ from .tool_context import ToolExecutionContext
 
 logger = logging.getLogger(__name__)
 
+# 模块级共享 checkpointer: 所有会话共用同一个 SQLite 数据库,
+# 通过 config["configurable"]["thread_id"] 区分不同会话的检查点
+_checkpointer: Optional[AsyncSqliteSaver | InMemorySaver] = None
 
-def build_graph(tool_ctx: ToolExecutionContext):
+
+async def get_checkpointer() -> AsyncSqliteSaver | InMemorySaver:
+    """获取共享的持久化 checkpointer, 首次调用时初始化"""
+    global _checkpointer
+    if _checkpointer is not None:
+        return _checkpointer
+
+    from app.core.config import settings
+
+    db_path = settings.checkpoint_db_path
+    if db_path:
+        import aiosqlite
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        # 手动创建连接和 saver, 避免 context manager 的生命周期问题
+        conn = await aiosqlite.connect(db_path)
+        _checkpointer = AsyncSqliteSaver(conn)
+        await _checkpointer.setup()
+        logger.info("检查点持久化已启用: %s (绝对路径: %s)", db_path,
+                     os.path.abspath(db_path))
+        return _checkpointer
+    else:
+        logger.info("未配置检查点路径, 使用内存模式 (重启后丢失)")
+        return InMemorySaver()
+
+
+def build_graph(tool_ctx: ToolExecutionContext,
+                checkpointer=None):
     """构建并返回已编译的 Agent StateGraph
 
     Args:
         tool_ctx: ToolExecutionContext 实例, 管理远程工具调用
+        checkpointer: 可选, 外部传入的 checkpointer (流模式复用共享实例)
 
     Returns:
         已编译的 CompiledStateGraph, 可通过 astream() 进行流式调用
@@ -82,5 +115,6 @@ def build_graph(tool_ctx: ToolExecutionContext):
     })
     builder.add_edge("tools", "call_model")
 
-    checkpointer = InMemorySaver()
-    return builder.compile(checkpointer=checkpointer)
+    # 使用传入的 checkpointer 或默认内存模式
+    actual_checkpointer = checkpointer if checkpointer is not None else InMemorySaver()
+    return builder.compile(checkpointer=actual_checkpointer)

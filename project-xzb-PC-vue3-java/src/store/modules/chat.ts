@@ -1,6 +1,8 @@
 /** AI 聊天状态管理 — 悬浮窗与侧边栏页共享 */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { listSessions, getSessionMessages } from '@/api/chat'
+import type { SessionInfo } from '@/api/chat'
 
 export interface ChatMsg {
   role: 'user' | 'assistant'
@@ -20,8 +22,11 @@ export const useChatStore = defineStore('chat', () => {
   /** 是否等待 AI 回复 */
   const loading = ref(false)
 
-  /** 会话 ID, 每次打开聊天窗时重新生成 */
+  /** 会话 ID */
   const sessionId = ref(generateSessionId())
+
+  /** 历史会话列表 */
+  const sessions = ref<SessionInfo[]>([])
 
   function generateSessionId(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -41,6 +46,12 @@ export const useChatStore = defineStore('chat', () => {
     if (streamingContent.value) {
       messages.value.push({ role: 'assistant', content: streamingContent.value })
     }
+    streamingContent.value = ''
+    loading.value = false
+  }
+
+  /** 取消流式: 丢弃已累积的部分内容 (不写入消息历史) */
+  function cancelStreaming() {
     streamingContent.value = ''
     loading.value = false
   }
@@ -81,19 +92,41 @@ export const useChatStore = defineStore('chat', () => {
     sessionId.value = generateSessionId()
   }
 
+  /** 加载历史会话列表 */
+  async function loadSessions() {
+    sessions.value = await listSessions()
+  }
+
+  /** 切换到指定会话, 加载消息历史 */
+  async function switchSession(sid: string) {
+    messages.value = []
+    streamingContent.value = ''
+    loading.value = false
+    sessionId.value = sid
+    const msgs = await getSessionMessages(sid)
+    messages.value = msgs.map(m => ({
+      role: m.role as 'user' | 'assistant',
+      content: m.content,
+    }))
+  }
+
   return {
     mode,
     messages,
     streamingContent,
     loading,
     sessionId,
+    sessions,
     addUserMessage,
     finishStreaming,
+    cancelStreaming,
     appendStreamChunk,
     handleError,
     startRequest,
     enterSidebar,
     enterFloating,
     resetSession,
+    loadSessions,
+    switchSession,
   }
 })

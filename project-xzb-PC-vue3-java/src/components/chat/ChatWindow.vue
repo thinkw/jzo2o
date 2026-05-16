@@ -3,9 +3,9 @@
   <transition name="chat-slide">
     <div v-if="visible" class="chat-window">
       <div class="chat-header">
-        <span>云岚到家 AI 助手</span>
+        <span>AI 助手</span>
         <div class="chat-header-actions">
-          <!-- 展开到侧边栏 -->
+          <!-- 展开到侧边栏 (侧边栏有完整会话管理) -->
           <button class="chat-expand-btn" title="展开到大窗口" @click="expand">⛶</button>
           <button class="chat-close-btn" @click="close">✕</button>
         </div>
@@ -18,6 +18,7 @@
       <ChatInput
         :loading="chatStore.loading"
         @send="handleSend"
+        @stop="handleStop"
       />
     </div>
   </transition>
@@ -35,23 +36,34 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const router = useRouter()
 const chatStore = useChatStore()
+let currentSession: { promise: Promise<void>; cancel: () => void } | null = null
 
 async function handleSend(content: string) {
   chatStore.addUserMessage(content)
   chatStore.startRequest()
 
   const recentMessages = chatStore.messages.slice(-20)
-  await sendChatMessage(recentMessages, chatStore.sessionId, {
+  currentSession = sendChatMessage(recentMessages, chatStore.sessionId, {
     onChunk(chunk: string) {
       chatStore.appendStreamChunk(chunk)
     },
     onDone() {
       chatStore.finishStreaming()
+      currentSession = null
     },
     onError(error: string) {
       chatStore.handleError(error)
+      currentSession = null
     },
   })
+
+  await currentSession.promise
+}
+
+function handleStop() {
+  currentSession?.cancel()
+  chatStore.cancelStreaming()
+  currentSession = null
 }
 
 function expand() {
@@ -61,6 +73,7 @@ function expand() {
 }
 
 function close() {
+  handleStop()
   emit('close')
 }
 </script>

@@ -24,6 +24,56 @@ async def get_current_time() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
+@tool
+async def search_web(query: str) -> str:
+    """联网搜索, 获取最新的网络信息。当需要了解实时新闻、最新资讯、或不确定的实时信息时使用。"""
+    import logging
+    logger = logging.getLogger(__name__)
+
+    try:
+        from tavily import TavilyClient
+        from app.core.config import settings
+
+        api_key = settings.tavily_api_key
+        if not api_key:
+            return ("错误: 未配置 TAVILY_API_KEY 环境变量。"
+                    "请在 .env 文件中添加 TAVILY_API_KEY=你的API密钥。"
+                    "免费获取: https://app.tavily.com")
+
+        client = TavilyClient(api_key=api_key)
+        response = client.search(
+            query=query,
+            search_depth="basic",
+            include_answer=True,
+            max_results=5,
+        )
+
+        # 组装结果: 答案 + 来源
+        parts = []
+        if response.get("answer"):
+            parts.append(f"## 搜索结果摘要\n{response['answer']}")
+
+        results = response.get("results", [])
+        if results:
+            parts.append("\n## 相关来源")
+            for r in results:
+                title = r.get("title", "无标题")
+                url = r.get("url", "")
+                content = r.get("content", "")[:300]
+                parts.append(f"- **{title}**\n  {content}\n  {url}")
+
+        if not parts:
+            return "未找到相关的搜索结果。"
+
+        return "\n\n".join(parts)
+
+    except ImportError:
+        return ("错误: tavily-python 未安装。请运行 pip install tavily-python")
+    except Exception as e:
+        logger.error("Tavily 搜索失败: %s", str(e))
+        return f"搜索失败: {e}"
+
+
 # =============================================================================
 # 远程工具 — Java 通过 WebSocket 执行 (存根仅供 schema 生成)
 # =============================================================================
@@ -51,7 +101,7 @@ async def query_evaluations(target_type_id: int, target_id: int, after_time: str
 # 工具注册表
 # =============================================================================
 
-LOCAL_TOOLS: list = [calculate, get_current_time]
+LOCAL_TOOLS: list = [calculate, get_current_time, search_web]
 REMOTE_TOOLS: list = [customer_order_query, get_evaluation_summary, query_evaluations]
 ALL_TOOLS: list = LOCAL_TOOLS + REMOTE_TOOLS
 

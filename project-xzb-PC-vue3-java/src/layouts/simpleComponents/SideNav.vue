@@ -16,8 +16,8 @@
         >
           <img
             v-if="!collapsed"
-            class="logofull"
-            src="@/assets/test-img/logofull.png"
+            class="logo"
+            src="@/assets/test-img/logo.png"
           />
           <img v-if="collapsed" class="logo" src="@/assets/test-img/logo.png" />
         </span>
@@ -28,8 +28,8 @@
         >
           <img
             v-if="!collapsed"
-            class="logofull"
-            src="@/assets/logBlackTemFull.png"
+            class="logo"
+            src="@/assets/logBlackTem.png"
           />
           <img v-if="collapsed" class="logo" src="@/assets/logBlackTem.png" />
         </span>
